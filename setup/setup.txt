@@ -1,0 +1,6 @@
+##Paths
+Z:/photo
+
+##Extensions
+.jpg
+.png
