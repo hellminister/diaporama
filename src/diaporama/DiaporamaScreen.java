@@ -1,13 +1,13 @@
 package diaporama;
 
-import diaporama.imageloader.ImageLoader;
+import diaporama.medialoader.MediaLoader;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -20,47 +20,41 @@ import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 
 import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.SEVERE;
 
 
-public class DiaporamaScreen extends Scene {
+class DiaporamaScreen extends Scene {
     private static final Logger LOG = Logger.getLogger(DiaporamaScreen.class.getName());
 
+    private final ProgramParameters parameters;
+
     private Screen screen;
-    private Rectangle2D screenSize;
 
     private final StackPane root;
-    private final StackPane mainPane;
-    private ImageView backgroundPlate;
-    private Pane backgroundImagePane;
+    private ImageView imageNode;
+    private Pane imagePane;
 
-    private ImageLoader imageLoader;
+    private MediaLoader mediaLoader;
     private SequentialTransition st;
-    private FadeTransition sft;
-    private FadeTransition mft;
-    private FadeTransition eft;
 
-    public DiaporamaScreen(ImageLoader images, Screen screen) {
+    public DiaporamaScreen(MediaLoader media, Screen screen, ProgramParameters param) {
         super(new StackPane());
+        parameters = param;
         root = (StackPane) getRoot();
         root.setStyle("-fx-background-color: black");
 
         this.screen = screen;
-        screenSize = this.screen.getBounds();
 
-        imageLoader = images;
+        mediaLoader = media;
 
 
-        mainPane = new StackPane();
+        StackPane mainPane = new StackPane();
         mainPane.setAlignment(Pos.CENTER);
 
-        try {
-            createBackgroundImagePane();
-        } catch (InterruptedException e) {
-            LOG.log(SEVERE,e , ()-> e.toString());
-        }
 
-        mainPane.getChildren().add(backgroundImagePane);
+            createImagePane();
+
+
+        mainPane.getChildren().add(imagePane);
 
         linkBackgroundSizeToRootPane();
 
@@ -68,17 +62,23 @@ public class DiaporamaScreen extends Scene {
 
         setOnKeyReleased(this::onKeyReleasedActions);
 
-        sft = new FadeTransition(Duration.millis(1000), backgroundPlate);
+        setTransitions();
+
+        st.play();
+    }
+
+    private void setTransitions() {
+        FadeTransition sft = new FadeTransition(Duration.millis(parameters.getImageFadeTime()), imageNode);
         sft.setFromValue(0.0);
         sft.setToValue(1.0);
         sft.setCycleCount(1);
 
-        mft = new FadeTransition(Duration.millis(3000), backgroundPlate);
+        FadeTransition mft = new FadeTransition(Duration.millis(parameters.getImageShowTime()), imageNode);
         mft.setFromValue(1.0);
         mft.setToValue(1.0);
         mft.setCycleCount(1);
 
-        eft = new FadeTransition(Duration.millis(1000), backgroundPlate);
+        FadeTransition eft = new FadeTransition(Duration.millis(parameters.getImageFadeTime()), imageNode);
         eft.setFromValue(1.0);
         eft.setToValue(0.0);
         eft.setCycleCount(1);
@@ -87,48 +87,38 @@ public class DiaporamaScreen extends Scene {
 
         st.setOnFinished(e ->{
             try {
-                backgroundPlate.setImage(imageLoader.getNextImage());
+                imageNode.setImage(mediaLoader.getImageLoader().getNext());
                 st.playFromStart();
             } catch (NoSuchElementException | InterruptedException ex) {
-                LOG.log(INFO, ()-> ex.toString());
+                LOG.log(INFO, ex::toString);
             }
 
         });
-
-        st.play();
-
-
     }
 
     private void onKeyReleasedActions(KeyEvent e) {
-
-
-        switch (e.getCode()) {
-            case ESCAPE:
-                st.stop();
-                imageLoader.stop();
-                Platform.exit();
-                break;
-            default:
-                break;
+        if (e.getCode() == KeyCode.ESCAPE) {
+            st.stop();
+            mediaLoader.stop();
+            Platform.exit();
         }
     }
 
-    private void createBackgroundImagePane() throws NoSuchElementException, InterruptedException {
-        backgroundPlate = new ImageView(imageLoader.getNextImage());
-        backgroundPlate.setPreserveRatio(true);
+    private void createImagePane() {
+        imageNode = new ImageView();
+        imageNode.setPreserveRatio(true);
 
-        backgroundPlate.setFitHeight(screenSize.getHeight());
-        backgroundPlate.setFitWidth(screenSize.getWidth());
+        imageNode.setFitHeight(screen.getBounds().getHeight());
+        imageNode.setFitWidth(screen.getBounds().getWidth());
 
-        backgroundImagePane = new Pane();
-        backgroundImagePane.getChildren().add(backgroundPlate);
+        imagePane = new Pane();
+        imagePane.getChildren().add(imageNode);
     }
 
     private void linkBackgroundSizeToRootPane() {
-        root.setPrefSize(screenSize.getWidth(), screenSize.getHeight());
-        backgroundPlate.fitHeightProperty().bind(root.heightProperty());
-        backgroundPlate.fitWidthProperty().bind(root.widthProperty());
+        root.setPrefSize(screen.getBounds().getWidth(), screen.getBounds().getHeight());
+        imageNode.fitHeightProperty().bind(root.heightProperty());
+        imageNode.fitWidthProperty().bind(root.widthProperty());
     }
 
 
