@@ -14,7 +14,7 @@ Z:/Video/Avril 2017
 
 ; video extension to treat, 1 extension per line
 ##Video-Extensions
-.mp4
+;.mp4
 
 ; the time the image will fade in or out in milliseconds
 ; place only 1 value - only the last value will be used

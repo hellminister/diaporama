@@ -8,8 +8,9 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static java.util.logging.Level.INFO;
-
+/**
+ * Reads and Contains the parameters of the program read from the given setup file
+ */
 public final class ProgramParameters {
     private static final Logger LOG = Logger.getLogger(ProgramParameters.class.getName());
 
@@ -24,8 +25,12 @@ public final class ProgramParameters {
     private final int videoQueueSize;
     private final int videoStartChance;
 
+    /**
+     * Reads the files and sets the values of the program parameters
+     * @param setupPath the setup file path
+     */
     public ProgramParameters(String setupPath) {
-        LOG.log(INFO, ()-> setupPath);
+        LOG.info( ()-> setupPath);
 
         var dirDefault = new HashSet<String>();
         var extDefault = new HashMap<String, String>();
@@ -70,15 +75,9 @@ public final class ProgramParameters {
                             break;
                         case "Video-RDM":
                             vidRdmDefault = "true".equals(line);
-                            boolean finalVidRdmDefault = vidRdmDefault;
-                            String finalLine2 = line;
-                            LOG.info(() -> "Video-RDM value : " + finalVidRdmDefault + " line value " + finalLine2);
                             break;
                         case "Image-RDM":
                             imRdmDefault = "true".equals(line);
-                            boolean finalimRdmDefault = imRdmDefault;
-                            String finalLine1 = line;
-                            LOG.info(() -> "Image-RDM value : " + finalimRdmDefault + " line value " + finalLine1);
                             break;
                         case "Image-Queue-Size":
                             imQueueSizeDefault = Integer.parseInt(line);
