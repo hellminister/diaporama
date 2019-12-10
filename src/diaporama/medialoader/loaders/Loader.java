@@ -25,7 +25,7 @@ public class Loader<T> {
     }
 
     public void addFileName(String s) {
-        LOG.log(Level.INFO, () -> this.getClass().getName() + " adds " + s);
+        LOG.log(Level.FINE, () -> this.getClass().getName() + " adds " + s);
         files.add(s);
     }
 
@@ -42,4 +42,7 @@ public class Loader<T> {
     }
 
 
+    public boolean isEmpty() {
+        return queueFiller.isEmpty();
+    }
 }

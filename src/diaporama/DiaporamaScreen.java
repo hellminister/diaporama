@@ -1,8 +1,6 @@
 package diaporama;
 
 import diaporama.medialoader.MediaLoader;
-import javafx.animation.FadeTransition;
-import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,112 +11,108 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.MediaView;
 import javafx.stage.Screen;
-import javafx.util.Duration;
 
-import java.util.NoSuchElementException;
+import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static java.util.logging.Level.INFO;
 
 
 class DiaporamaScreen extends Scene {
     private static final Logger LOG = Logger.getLogger(DiaporamaScreen.class.getName());
 
-    private final ProgramParameters parameters;
-
     private Screen screen;
 
     private final StackPane root;
-    private ImageView imageNode;
-    private Pane imagePane;
+    private final ImageView imageNode;
 
-    private MediaLoader mediaLoader;
-    private SequentialTransition st;
+    private final MediaLoader mediaLoader;
+    private final MediaView videoNode;
+    private ImageTransitioning imageTransition;
+    private VideoTransitioning videoTransition;
+
+    private Random rdm;
+
+    private final int videoStartChance;
 
     public DiaporamaScreen(MediaLoader media, Screen screen, ProgramParameters param) {
         super(new StackPane());
-        parameters = param;
+        videoStartChance = param.getVideoStartChance();
+
+        rdm = new Random();
+
         root = (StackPane) getRoot();
         root.setStyle("-fx-background-color: black");
-
-        this.screen = screen;
-
         mediaLoader = media;
 
 
-        StackPane mainPane = new StackPane();
-        mainPane.setAlignment(Pos.CENTER);
+        imageTransition = new ImageTransitioning(mediaLoader.getImageLoader(), this, param);
+        imageNode = imageTransition.getView();
 
+        videoTransition = new VideoTransitioning(mediaLoader.getVideoLoader(), this, param);
+        videoNode = videoTransition.getView();
 
-            createImagePane();
+        this.screen = screen;
 
+        Pane imagePane = createImagePane();
+        Pane videoPane = createVideoPane();
 
-        mainPane.getChildren().add(imagePane);
 
         linkBackgroundSizeToRootPane();
 
-        root.getChildren().add(createCenteringPanesFor(mainPane));
+        root.getChildren().add(createCenteringPanesFor(imagePane));
+        root.getChildren().add(createCenteringPanesFor(videoPane));
 
         setOnKeyReleased(this::onKeyReleasedActions);
 
-        setTransitions();
+        try {
+            nextAnimation();
+        } catch (InterruptedException e) {
+            LOG.log(Level.SEVERE, ()-> "got exception trying to first start animation " + e.toString());
+        }
 
-        st.play();
     }
 
-    private void setTransitions() {
-        FadeTransition sft = new FadeTransition(Duration.millis(parameters.getImageFadeTime()), imageNode);
-        sft.setFromValue(0.0);
-        sft.setToValue(1.0);
-        sft.setCycleCount(1);
-
-        FadeTransition mft = new FadeTransition(Duration.millis(parameters.getImageShowTime()), imageNode);
-        mft.setFromValue(1.0);
-        mft.setToValue(1.0);
-        mft.setCycleCount(1);
-
-        FadeTransition eft = new FadeTransition(Duration.millis(parameters.getImageFadeTime()), imageNode);
-        eft.setFromValue(1.0);
-        eft.setToValue(0.0);
-        eft.setCycleCount(1);
-
-        st = new SequentialTransition(sft, mft, eft);
-
-        st.setOnFinished(e ->{
-            try {
-                imageNode.setImage(mediaLoader.getImageLoader().getNext());
-                st.playFromStart();
-            } catch (NoSuchElementException | InterruptedException ex) {
-                LOG.log(INFO, ex::toString);
-            }
-
-        });
-    }
 
     private void onKeyReleasedActions(KeyEvent e) {
         if (e.getCode() == KeyCode.ESCAPE) {
-            st.stop();
             mediaLoader.stop();
             Platform.exit();
         }
     }
 
-    private void createImagePane() {
-        imageNode = new ImageView();
+    private Pane createVideoPane(){
+        videoNode.setPreserveRatio(true);
+
+        videoNode.setFitHeight(screen.getBounds().getHeight());
+        videoNode.setFitHeight(screen.getBounds().getWidth());
+
+        Pane videoPane = new Pane();
+        videoPane.getChildren().add(videoNode);
+
+        return videoPane;
+    }
+
+    private Pane createImagePane() {
         imageNode.setPreserveRatio(true);
 
         imageNode.setFitHeight(screen.getBounds().getHeight());
         imageNode.setFitWidth(screen.getBounds().getWidth());
 
-        imagePane = new Pane();
+        var imagePane = new Pane();
         imagePane.getChildren().add(imageNode);
+        return imagePane;
     }
 
     private void linkBackgroundSizeToRootPane() {
         root.setPrefSize(screen.getBounds().getWidth(), screen.getBounds().getHeight());
+
         imageNode.fitHeightProperty().bind(root.heightProperty());
         imageNode.fitWidthProperty().bind(root.widthProperty());
+
+        videoNode.fitHeightProperty().bind(root.heightProperty());
+        videoNode.fitWidthProperty().bind(root.widthProperty());
     }
 
 
@@ -135,4 +129,16 @@ class DiaporamaScreen extends Scene {
         return verticalCentering;
     }
 
+    public void nextAnimation() throws InterruptedException {
+        int value = rdm.nextInt(1000);
+
+        if (value <= videoStartChance && (videoTransition.canUse())){
+            videoTransition.changeImage();
+            videoTransition.start();
+        } else {
+            imageTransition.changeImage();
+            imageTransition.start();
+        }
+
+    }
 }

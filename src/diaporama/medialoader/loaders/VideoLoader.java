@@ -1,14 +1,22 @@
 package diaporama.medialoader.loaders;
 
+import diaporama.ProgramParameters;
 import diaporama.medialoader.QueueFiller;
 import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
-public class VideoLoader extends Loader<Media> {
-    public VideoLoader() {
-        super(new QueueFiller<>(2) {
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class VideoLoader extends Loader<MediaPlayer> {
+    private static final Logger LOG = Logger.getLogger(VideoLoader.class.getName());
+
+    public VideoLoader(ProgramParameters param) {
+        super(new QueueFiller<>(param.getVideoQueueSize(), param.getVideoRandom()) {
             @Override
-            protected Media generateMedia(String fileName) {
-                return new Media(fileName);
+            protected MediaPlayer generateMedia(String fileName) {
+                LOG.log(Level.FINE, ()-> "generating media " + fileName);
+                return new MediaPlayer(new Media(fileName));
             }
         });
     }

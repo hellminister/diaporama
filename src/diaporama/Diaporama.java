@@ -27,7 +27,7 @@ public class Diaporama extends Application {
 
         parameters = new ProgramParameters(setupFile);
 
-        media = new MediaLoader(parameters.getImageDirs(), parameters.getExtensions());
+        media = new MediaLoader(parameters);
         List<Stage> stages = new LinkedList<>();
         stages.add(primaryStage);
 

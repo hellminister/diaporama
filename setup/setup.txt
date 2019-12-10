@@ -1,5 +1,9 @@
-##ImagePaths
+; paths to search for videos and images
+; 1 path per line
+; while getting files, duplicates are not added
+##Paths
 Z:/photo
+Z:/Video/Avril 2017
 
 ; image extension to treat, 1 extension per line
 ##Image-Extensions
@@ -7,6 +11,10 @@ Z:/photo
 .png
 .jpeg
 .gif
+
+; video extension to treat, 1 extension per line
+##Video-Extensions
+.mp4
 
 ; the time the image will fade in or out in milliseconds
 ; place only 1 value - only the last value will be used
@@ -20,3 +28,34 @@ Z:/photo
 ##ImageShowTime
 4000
 
+; the time the video will fade in or out in milliseconds
+; place only 1 value - only the last value will be used
+; default value = 500
+##VideoFadeTime
+500
+
+; true : will take any file from the available ones
+; false : will read the files in the order they are found
+;       might not be the same at each execution because of the async finding of file
+;       won't play the same file twice until it loop-backs to start
+##Video-RDM
+true
+
+; true : will take any file from the available ones
+; false : will read the files in the order they are found
+;       might not be the same at each execution because of the async finding of file
+;       won't play the same file twice until it loop-backs to start
+##Image-RDM
+true
+
+; number of images that are preloaded
+##Image-Queue-Size
+10
+
+; number of videos that are preloaded
+##Video-Queue-Size
+2
+
+; the chance that a video will be played if possible in per thousands
+##Video-Start-Chance
+100

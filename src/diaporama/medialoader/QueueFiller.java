@@ -18,13 +18,14 @@ public abstract class QueueFiller<T> implements Runnable{
 
     protected Random randomNumGen;
     protected boolean random;
-    protected int next = 0;
+    protected int next;
 
-    protected QueueFiller(int size) {
+    protected QueueFiller(int size, boolean rdm) {
         queue = new ArrayBlockingQueue<>(size);
         running = new AtomicBoolean(false);
         randomNumGen = new Random();
-        random = true;
+        random = rdm;
+        next = 0;
     }
 
     public void start(){
@@ -55,16 +56,28 @@ public abstract class QueueFiller<T> implements Runnable{
 
         while (running.get()){
             String fileName = fileChoices.getFiles().get(getNextIndex());
-            queue.offer(generateMedia(fileName));
+            LOG.log(Level.FINE,
+                    () -> fileChoices.getClass().getName() + " will offer " + fileName + " " + queue.size());
+            try {
+                queue.offer(generateMedia(fileName), 5, TimeUnit.MINUTES);
+                LOG.log(Level.FINE, () -> fileChoices.getClass().getName() + " offers " + fileName);
+            } catch (InterruptedException e) {
+                LOG.log(Level.INFO,
+                        () -> "took too long before a space is available, might try a new one " + fileChoices.getClass().getName() + " " + fileName + "\n" + e.toString());
+            }
+
         }
-        LOG.log(Level.INFO, () -> fileChoices.getClass().getName() + " queue stopped");
+        LOG.log(Level.FINE, () -> fileChoices.getClass().getName() + " queue stopped");
 
     }
 
     protected abstract T generateMedia(String fileName);
 
     public T get() throws InterruptedException {
-        return queue.poll(1000, TimeUnit.MILLISECONDS);
+        LOG.log(Level.FINE, () -> fileChoices.getClass().getName() + " will send Media");
+        T toSend = queue.poll(5000, TimeUnit.MILLISECONDS);
+        LOG.log(Level.FINE, () -> fileChoices.getClass().getName() + " sending Media");
+        return toSend;
     }
 
     public boolean isEmpty() {
@@ -75,7 +88,11 @@ public abstract class QueueFiller<T> implements Runnable{
         if (random){
             return randomNumGen.nextInt(fileChoices.getFiles().size());
         } else {
-            return next++;
+            ++next;
+            if (next >= fileChoices.getFiles().size()){
+                next = 0;
+            }
+            return next;
         }
     }
 
