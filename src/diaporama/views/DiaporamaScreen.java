@@ -1,5 +1,6 @@
-package diaporama;
+package diaporama.views;
 
+import diaporama.ProgramParameters;
 import diaporama.medialoader.MediaLoader;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -68,7 +69,7 @@ public class DiaporamaScreen extends Scene {
 
         try {
             nextAnimation();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | IllegalAccessException e) {
             LOG.log(Level.SEVERE, ()-> "got exception trying to first start animation " + e.toString());
         }
 
@@ -129,7 +130,7 @@ public class DiaporamaScreen extends Scene {
         return verticalCentering;
     }
 
-    public void nextAnimation() throws InterruptedException {
+    public void nextAnimation() throws InterruptedException, IllegalAccessException {
         int value = rdm.nextInt(1000);
 
         if (value <= videoStartChance && (videoTransition.canUse())){

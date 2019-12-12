@@ -1,12 +1,16 @@
-package diaporama;
+package diaporama.views;
 
+import diaporama.ProgramParameters;
 import diaporama.medialoader.loaders.ImageLoader;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
+import java.util.logging.Logger;
+
 public class ImageTransitioning {
+    private static final Logger LOG = Logger.getLogger(ImageTransitioning.class.getName());
 
     private final SequentialTransition transition;
     private final ImageView image;
@@ -40,8 +44,8 @@ public class ImageTransitioning {
         transition.setOnFinished(e -> {
             try {
                 currentPlaying.nextAnimation();
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
+            } catch (InterruptedException | IllegalAccessException ex) {
+                LOG.severe(ex::toString);
             }
         });
     }

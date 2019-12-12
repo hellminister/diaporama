@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.Duration;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -13,6 +14,7 @@ import java.util.logging.Logger;
 public final class ProgramParameters {
     private static final Logger LOG = Logger.getLogger(ProgramParameters.class.getName());
     private static final String ls = System.lineSeparator();
+
 
     private final Set<String> paths;
     private final Map<String, String> extensions;
@@ -25,6 +27,7 @@ public final class ProgramParameters {
     private final int videoQueueSize;
     private final int videoStartChance;
     private final double videoBufferingTime;
+    private final Duration filePathUpdateTime;
 
     /**
      * Reads the files and sets the values of the program parameters
@@ -44,6 +47,7 @@ public final class ProgramParameters {
         var vidQueueSizeDefault = 2;
         var vidStartChanceDefault = 100;
         var vidBufferingTimeDefault = 10.0;
+        var filePathUpdateDefault = Duration.ofDays(1);
 
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(setupPath)))){
             String line = reader.readLine();
@@ -93,6 +97,9 @@ public final class ProgramParameters {
                         case "Video-Buffering-Time":
                             vidBufferingTimeDefault = Double.parseDouble(line);
                             break;
+                        case "File-Paths-Update-Time":
+                            filePathUpdateDefault = Duration.parse(line);
+                            break;
                         default:
                             String finalTreatingSection = treatingSection;
                             String finalLine = line;
@@ -119,6 +126,7 @@ public final class ProgramParameters {
         videoQueueSize = vidQueueSizeDefault;
         videoStartChance = vidStartChanceDefault;
         videoBufferingTime = vidBufferingTimeDefault;
+        filePathUpdateTime = filePathUpdateDefault;
 
         LOG.info(() -> "Paths                 " + paths.toString() + ls +
                        "Extensions            " + extensions.toString() + ls +
@@ -130,7 +138,8 @@ public final class ProgramParameters {
                        "Image Queue Size      " + imageQueueSize + ls +
                        "Video Queue Size      " + videoQueueSize + ls +
                        "Video Starting Chance " + videoStartChance + ls +
-                       "Video Buffering Time  " + videoBufferingTime + ls);
+                       "Video Buffering Time  " + videoBufferingTime + ls +
+                       "Filepath Update Time  " + filePathUpdateTime + ls);
 
     }
 
@@ -223,5 +232,13 @@ public final class ProgramParameters {
      */
     public double getVideoBufferingTime() {
         return videoBufferingTime;
+    }
+
+    /**
+     * ##File-Paths-Update-Time
+     * @return the wait duration in milliseconds before rewalking the path to get new files
+     */
+    public long getUpdateTime() {
+        return filePathUpdateTime.toMillis();
     }
 }

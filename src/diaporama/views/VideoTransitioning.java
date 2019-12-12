@@ -1,5 +1,6 @@
-package diaporama;
+package diaporama.views;
 
+import diaporama.ProgramParameters;
 import diaporama.medialoader.loaders.VideoLoader;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
@@ -58,14 +59,14 @@ public class VideoTransitioning {
             try {
                 producer.release(currentPlaying);
                 currentPlaying.nextAnimation();
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException | IllegalAccessException ex) {
                 LOG.severe(ex::toString);
             }
         });
     }
 
-    public void prepareAndStart() throws InterruptedException {
-        MediaPlayer mp = producer.getNext();
+    public void prepareAndStart() throws InterruptedException, IllegalAccessException {
+        MediaPlayer mp = producer.getNext(currentPlaying);
         media.setMediaPlayer(mp);
 
         LOG.fine(() -> "preparing video to play " + mp.getStatus());
@@ -105,7 +106,7 @@ public class VideoTransitioning {
     }
 
     private void buffering(MediaPlayer mp) {
-        boolean enoughBuffer = false;
+        boolean enoughBuffer;
         do {
             Duration bufferTime = mp.getBufferProgressTime().subtract(mp.getCurrentTime());
             enoughBuffer = bufferTime.greaterThanOrEqualTo(bufferingTime)

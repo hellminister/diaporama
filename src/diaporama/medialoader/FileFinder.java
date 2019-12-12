@@ -1,5 +1,6 @@
 package diaporama.medialoader;
 
+import diaporama.ProgramParameters;
 import diaporama.medialoader.loaders.ImageLoader;
 import diaporama.medialoader.loaders.VideoLoader;
 
@@ -8,12 +9,14 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+/**
+ * Passes through all files and subfolders from a given folder
+ * to find all usable files
+ */
 public class FileFinder implements Runnable {
     private static final Logger LOG = Logger.getLogger(FileFinder.class.getName());
 
@@ -21,53 +24,65 @@ public class FileFinder implements Runnable {
     private final Map<String,String> extensions;
     private final ImageLoader imageBag;
     private final VideoLoader videoBag;
-    private final AtomicBoolean running;
+    private int ranXTime;
 
-    public FileFinder(Path directory, Map<String, String> accExtensions, ImageLoader imageBag,
-                      VideoLoader videoBag) {
+    /**
+     *
+     * @param directory the folder to monitor
+     * @param imageBag the image manager
+     * @param videoBag the video manager
+     * @param params the program parameters
+     */
+    public FileFinder(Path directory, ImageLoader imageBag,
+                      VideoLoader videoBag, ProgramParameters params) {
         this.directory = directory;
-        this.extensions = accExtensions;
+        this.extensions = params.getExtensions();
         this.imageBag = imageBag;
         this.videoBag = videoBag;
+        ranXTime = 0;
 
-        running = new AtomicBoolean(false);
     }
 
-    public void stop() {
-        running.set(false);
-    }
-
+    /**
+     * Extracts the full file names and places them in the proper container
+     */
     @Override
     public void run() {
-        running.set(true);
+        LOG.info(() -> "Walking " + directory + " " + ++ranXTime + " time");
 
-        try (Stream<Path> walk = Files.walk(directory)) {
-            var toLoop = walk.filter(Files::isRegularFile).map(q -> {
-                try {
-                    return q.toUri().toURL().toExternalForm();
-                } catch (MalformedURLException e) {
-                    LOG.log(Level.SEVERE, e, () -> "Got a malformed url for " + q.toString() + "\n" + e.toString());
-                }
-                return "";
-            })
-                    .filter(Predicate.not(String::isBlank))
-                    .filter(s -> this.extensions.containsKey(s.toLowerCase().substring(s.lastIndexOf("."))))
-                    .iterator();
+            try (Stream<Path> walk = Files.walk(directory)) {
+                // an iterator that filters the files and returns the full path names in string
+                var toLoop = walk.filter(Files::isRegularFile).map(q -> {
+                    try {
+                        return q.toUri().toURL().toExternalForm();
+                    } catch (MalformedURLException e) {
+                        LOG.severe(() -> "Got a malformed url for " + q.toString() + "\n" + e.toString());
+                    }
+                    return "";
+                })
+                        .filter(Predicate.not(String::isBlank))
+                        .filter(s -> this.extensions.containsKey(s.toLowerCase().substring(s.lastIndexOf("."))))
+                        .iterator();
 
-            while (toLoop.hasNext() && running.get()) {
-                String s = toLoop.next();
-                String ext = extensions.get(s.toLowerCase().substring(s.lastIndexOf(".")));
-                if ("Image".equals(ext)){
-                    imageBag.addFileName(s);
-                } else if ("Video".equals(ext)){
-                    videoBag.addFileName(s);
+                // collect all the found files to its proper container
+                // use of iterator and while loop so we can stop execution if the thread is interrupted
+                while (toLoop.hasNext() && !Thread.currentThread().isInterrupted()) {
+                    String s = toLoop.next();
+                    String ext = extensions.get(s.toLowerCase().substring(s.lastIndexOf(".")));
+                    if ("Image".equals(ext)) {
+                        imageBag.addFileName(s);
+                    } else if ("Video".equals(ext)) {
+                        videoBag.addFileName(s);
+                    }
                 }
+
+            } catch (IOException e) {
+                LOG.severe( () -> "Trouble while walking this path " + directory + "\n" + e.toString());
             }
 
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, e, () -> "Trouble while walking this path " + directory + "\n" + e.toString());
-        }
-        LOG.log(Level.INFO, () -> this.getClass().getName() + " Stopped");
+
+
+        LOG.info(() -> "Finished walking " + directory + " for now");
 
     }
 }

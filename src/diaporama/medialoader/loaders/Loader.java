@@ -3,7 +3,6 @@ package diaporama.medialoader.loaders;
 import diaporama.medialoader.DistinctArrayList;
 import diaporama.medialoader.QueueFiller;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Loader<T> {
@@ -25,7 +24,7 @@ public class Loader<T> {
     }
 
     public void addFileName(String s) {
-        LOG.log(Level.FINE, () -> this.getClass().getName() + " adds " + s);
+        LOG.fine( () -> this.getClass().getName() + " adds " + s);
         files.add(s);
     }
 

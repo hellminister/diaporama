@@ -38,6 +38,7 @@ Z:/Video/Avril 2017
 ; false : will read the files in the order they are found
 ;       might not be the same at each execution because of the async finding of file
 ;       won't play the same file twice until it loop-backs to start
+; default value = true
 ##Video-RDM
 true
 
@@ -45,20 +46,34 @@ true
 ; false : will read the files in the order they are found
 ;       might not be the same at each execution because of the async finding of file
 ;       won't play the same file twice until it loop-backs to start
+; default value = true
 ##Image-RDM
 true
 
 ; number of images that are preloaded
+; default value = 10
 ##Image-Queue-Size
 10
 
 ; number of videos that are preloaded
+; default value = 2
 ##Video-Queue-Size
 2
 
 ; the chance a video will be played if possible in per thousands
+; default value = 100
 ##Video-Start-Chance
 1000
 
+; The minimum time that the buffer should contain before playing video in seconds
+; default value = 10
 ##Video-Buffering-Time
 10
+
+; The wait time between file exploration
+; This uses the notation of java.time.Duration PnDTnHnMn.nS
+; P2DT3H4M  -- parses as "2 days, 3 hours and 4 minutes"
+; PT20.345S -- parses as "20.345 seconds"
+; default value = 1 day
+##File-Paths-Update-Time
+P1D

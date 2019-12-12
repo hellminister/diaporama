@@ -1,6 +1,7 @@
 package diaporama;
 
 import diaporama.medialoader.MediaLoader;
+import diaporama.views.DiaporamaScreen;
 import javafx.application.Application;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
