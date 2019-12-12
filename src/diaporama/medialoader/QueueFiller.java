@@ -13,10 +13,10 @@ public abstract class QueueFiller<T> implements Runnable{
     private static final Logger LOG = Logger.getLogger(QueueFiller.class.getName());
 
     protected Loader<T> fileChoices;
-    protected AtomicBoolean running;
-    protected ArrayBlockingQueue<T> queue;
+    protected final AtomicBoolean running;
+    protected final ArrayBlockingQueue<T> queue;
 
-    protected Random randomNumGen;
+    protected final Random randomNumGen;
     protected boolean random;
     protected int next;
 

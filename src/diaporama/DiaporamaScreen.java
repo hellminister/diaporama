@@ -19,20 +19,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-class DiaporamaScreen extends Scene {
+public class DiaporamaScreen extends Scene {
     private static final Logger LOG = Logger.getLogger(DiaporamaScreen.class.getName());
 
-    private Screen screen;
+    private final Screen screen;
 
     private final StackPane root;
     private final ImageView imageNode;
 
     private final MediaLoader mediaLoader;
     private final MediaView videoNode;
-    private ImageTransitioning imageTransition;
-    private VideoTransitioning videoTransition;
+    private final ImageTransitioning imageTransition;
+    private final VideoTransitioning videoTransition;
 
-    private Random rdm;
+    private final Random rdm;
 
     private final int videoStartChance;
 
@@ -133,11 +133,11 @@ class DiaporamaScreen extends Scene {
         int value = rdm.nextInt(1000);
 
         if (value <= videoStartChance && (videoTransition.canUse())){
-            videoTransition.changeImage();
-            videoTransition.start();
+            LOG.info(() -> this + " chose a video");
+            videoTransition.prepareAndStart();
         } else {
-            imageTransition.changeImage();
-            imageTransition.start();
+            LOG.info(() -> this + " chose a photo");
+            imageTransition.prepareAndStart();
         }
 
     }

@@ -10,9 +10,8 @@ import java.util.logging.Logger;
  * @param <T>
  */
 public class DistinctArrayList<T> {
-    private static final Logger LOG = Logger.getLogger(DistinctArrayList.class.getName());
-    private List<T> list;
-    private Set<T> set;
+    private final List<T> list;
+    private final Set<T> set;
 
     public  DistinctArrayList() {
         list = Collections.synchronizedList(new ArrayList<>());

@@ -14,7 +14,7 @@ Z:/Video/Avril 2017
 
 ; video extension to treat, 1 extension per line
 ##Video-Extensions
-;.mp4
+.mp4
 
 ; the time the image will fade in or out in milliseconds
 ; place only 1 value - only the last value will be used
@@ -56,6 +56,9 @@ true
 ##Video-Queue-Size
 2
 
-; the chance that a video will be played if possible in per thousands
+; the chance a video will be played if possible in per thousands
 ##Video-Start-Chance
-100
+1000
+
+##Video-Buffering-Time
+10

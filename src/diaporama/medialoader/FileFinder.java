@@ -17,11 +17,11 @@ import java.util.stream.Stream;
 public class FileFinder implements Runnable {
     private static final Logger LOG = Logger.getLogger(FileFinder.class.getName());
 
-    private Path directory;
-    private Map<String,String> extensions;
-    private ImageLoader imageBag;
-    private VideoLoader videoBag;
-    private AtomicBoolean running;
+    private final Path directory;
+    private final Map<String,String> extensions;
+    private final ImageLoader imageBag;
+    private final VideoLoader videoBag;
+    private final AtomicBoolean running;
 
     public FileFinder(Path directory, Map<String, String> accExtensions, ImageLoader imageBag,
                       VideoLoader videoBag) {

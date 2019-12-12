@@ -7,24 +7,32 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.util.Duration;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 
-public class VideoTransitioning implements TransitionAnimation<MediaView> {
-    private static AtomicBoolean free;
+/**
+ * This class takes care of starting/controlling videos and the transition at the start and end of it
+ * Only 1 of the instances created can play at a time
+ */
+public class VideoTransitioning {
+    private static final Logger LOG = Logger.getLogger(VideoTransitioning.class.getName());
 
-    static {
-        free = new AtomicBoolean(true);
-    }
+    private final SequentialTransition transition;
+    private final MediaView media;
+    private final VideoLoader producer;
+    private final FadeTransition mft;
+    private final DiaporamaScreen currentPlaying;
+    private final Duration bufferingTime;
 
-    private SequentialTransition transition;
-    private MediaView media;
-    private VideoLoader producer;
-    private FadeTransition mft;
-    private DiaporamaScreen currentPlaying;
-
+    /**
+     * creates and set the video transition used to start and stop a video
+     * @param videoLoader The loader that contains all the videos to show
+     * @param ds the screen to which this node is attached
+     * @param parameters The parameters of the program
+     */
     VideoTransitioning(VideoLoader videoLoader, DiaporamaScreen ds, ProgramParameters parameters) {
         media = new MediaView();
         producer = videoLoader;
+        bufferingTime = Duration.seconds(parameters.getVideoBufferingTime());
 
         currentPlaying = ds;
 
@@ -48,34 +56,78 @@ public class VideoTransitioning implements TransitionAnimation<MediaView> {
 
         transition.setOnFinished(e -> {
             try {
-                free.set(true);
+                producer.release(currentPlaying);
                 currentPlaying.nextAnimation();
             } catch (InterruptedException ex) {
-                ex.printStackTrace();
+                LOG.severe(ex::toString);
             }
         });
     }
 
-    @Override
-    public void start(){
+    public void prepareAndStart() throws InterruptedException {
+        MediaPlayer mp = producer.getNext();
+        media.setMediaPlayer(mp);
+
+        LOG.fine(() -> "preparing video to play " + mp.getStatus());
+
+        mp.setOnStalled(() -> {
+            mft.pause();
+            mp.pause();
+
+            LOG.fine(() -> "mediaPlayer stalled");
+
+            buffering(mp);
+
+            mp.play();
+            mft.play();
+        });
+
+        if (mp.getStatus() != MediaPlayer.Status.READY) {
+            mp.setOnReady(() -> {
+                LOG.info(() -> "Buffering mediaPlayer");
+                doOnceReady(mp);
+            });
+        } else {
+            LOG.info(() -> "Buffering mediaPlayer after ready" );
+            doOnceReady(mp);
+        }
+    }
+
+    private void doOnceReady(MediaPlayer mp) {
+        buffering(mp);
+
+        mp.setAutoPlay(true);
+
+        mft.setDuration(mp.getMedia().getDuration());
+
+        LOG.fine(() -> "starting the video " + mp.getStatus() + " with a mft duration of " + mft.getDuration());
         transition.playFromStart();
     }
 
-    @Override
-    public void changeImage() throws InterruptedException {
-        MediaPlayer mp = producer.getNext();
-        mp.setAutoPlay(true);
-        media.setMediaPlayer(mp);
-
-        mft.setDuration(media.getMediaPlayer().getMedia().getDuration());
+    private void buffering(MediaPlayer mp) {
+        boolean enoughBuffer = false;
+        do {
+            Duration bufferTime = mp.getBufferProgressTime().subtract(mp.getCurrentTime());
+            enoughBuffer = bufferTime.greaterThanOrEqualTo(bufferingTime)
+                            || mp.getBufferProgressTime().greaterThanOrEqualTo(mp.getMedia().getDuration());
+            LOG.fine(() -> "Buffered Time " + bufferTime);
+            LOG.fine(() -> "bufferTime.greaterThanOrEqualTo(bufferingTime) " + bufferTime.greaterThanOrEqualTo(bufferingTime));
+            LOG.fine(() -> "mp.getBufferProgressTime().greaterThanOrEqualTo(mp.getMedia().getDuration()) " + mp.getBufferProgressTime().greaterThanOrEqualTo(mp.getMedia().getDuration()));
+            if (!enoughBuffer) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    LOG.info(e::getMessage);
+                }
+            }
+        } while (!enoughBuffer);
     }
 
-    @Override
     public MediaView getView(){
         return media;
     }
 
-    synchronized boolean canUse(){
-        return free.compareAndSet(true, false) && !producer.isEmpty();
+    boolean canUse(){
+        return producer.canUse(currentPlaying);
     }
 }

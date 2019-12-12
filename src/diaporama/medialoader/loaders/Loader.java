@@ -10,8 +10,8 @@ public class Loader<T> {
     private static final Logger LOG = Logger.getLogger(Loader.class.getName());
 
 
-    protected DistinctArrayList<String> files;
-    protected QueueFiller<T> queueFiller;
+    protected final DistinctArrayList<String> files;
+    protected final QueueFiller<T> queueFiller;
 
 
     public Loader(QueueFiller<T> filler){

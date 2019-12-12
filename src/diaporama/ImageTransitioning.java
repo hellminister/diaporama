@@ -6,12 +6,12 @@ import javafx.animation.SequentialTransition;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
-public class ImageTransitioning implements  TransitionAnimation<ImageView>{
+public class ImageTransitioning {
 
-    private SequentialTransition transition;
-    private ImageView image;
-    private ImageLoader producer;
-    private DiaporamaScreen currentPlaying;
+    private final SequentialTransition transition;
+    private final ImageView image;
+    private final ImageLoader producer;
+    private final DiaporamaScreen currentPlaying;
 
 
     ImageTransitioning(ImageLoader imageLoader, DiaporamaScreen ds, ProgramParameters parameters) {
@@ -46,17 +46,11 @@ public class ImageTransitioning implements  TransitionAnimation<ImageView>{
         });
     }
 
-    @Override
-    public void start(){
+    public void prepareAndStart() throws InterruptedException {
+        image.setImage(producer.getNext());
         transition.playFromStart();
     }
 
-    @Override
-    public void changeImage() throws InterruptedException {
-        image.setImage(producer.getNext());
-    }
-
-    @Override
     public ImageView getView(){
         return image;
     }

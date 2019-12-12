@@ -13,10 +13,10 @@ import static java.util.logging.Level.FINE;
 
 public class MediaLoader {
     private static final Logger LOG = Logger.getLogger(MediaLoader.class.getName());
-    private ImageLoader imageLoader;
-    private VideoLoader videoLoader;
+    private final ImageLoader imageLoader;
+    private final VideoLoader videoLoader;
 
-    private List<FileFinder> finders;
+    private final List<FileFinder> finders;
 
     public MediaLoader( ProgramParameters param){
         imageLoader = new ImageLoader(param);
