@@ -5,31 +5,25 @@ import diaporama.medialoader.MediaLoader;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.MediaView;
 import javafx.stage.Screen;
 
 import java.util.Random;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+/**
+ * The slide show scene
+ */
 public class DiaporamaScreen extends Scene {
     private static final Logger LOG = Logger.getLogger(DiaporamaScreen.class.getName());
 
-    private final Screen screen;
-
-    private final StackPane root;
-    private final ImageView imageNode;
-
     private final MediaLoader mediaLoader;
-    private final MediaView videoNode;
+
     private final ImageTransitioning imageTransition;
     private final VideoTransitioning videoTransition;
 
@@ -37,30 +31,47 @@ public class DiaporamaScreen extends Scene {
 
     private final int videoStartChance;
 
+    /**
+     * creates the slide show scene
+     * @param media the media loader to use
+     * @param screen the screen to which this scene is attached
+     * @param param the program parameters
+     */
     public DiaporamaScreen(MediaLoader media, Screen screen, ProgramParameters param) {
         super(new StackPane());
+
+        mediaLoader = media;
+
         videoStartChance = param.getVideoStartChance();
 
         rdm = new Random();
 
-        root = (StackPane) getRoot();
+        var root = (StackPane) getRoot();
         root.setStyle("-fx-background-color: black");
-        mediaLoader = media;
-
+        root.setPrefSize(screen.getBounds().getWidth(), screen.getBounds().getHeight());
 
         imageTransition = new ImageTransitioning(mediaLoader.getImageLoader(), this, param);
-        imageNode = imageTransition.getView();
+
+        // sets the Node that will contains Images/Photos
+        var imageNode = imageTransition.getView();
+        imageNode.setPreserveRatio(true);
+        imageNode.fitHeightProperty().bind(root.heightProperty());
+        imageNode.fitWidthProperty().bind(root.widthProperty());
+
+        Pane imagePane = new Pane();
+        imagePane.getChildren().add(imageNode);
 
         videoTransition = new VideoTransitioning(mediaLoader.getVideoLoader(), this, param);
-        videoNode = videoTransition.getView();
 
-        this.screen = screen;
+        // sets the Node that will play Videos
+        var videoNode = videoTransition.getView();
+        videoNode.setPreserveRatio(true);
+        videoNode.fitHeightProperty().bind(root.heightProperty());
+        videoNode.fitWidthProperty().bind(root.widthProperty());
 
-        Pane imagePane = createImagePane();
-        Pane videoPane = createVideoPane();
+        Pane videoPane = new Pane();
+        videoPane.getChildren().add(videoNode);
 
-
-        linkBackgroundSizeToRootPane();
 
         root.getChildren().add(createCenteringPanesFor(imagePane));
         root.getChildren().add(createCenteringPanesFor(videoPane));
@@ -70,12 +81,17 @@ public class DiaporamaScreen extends Scene {
         try {
             nextAnimation();
         } catch (InterruptedException | IllegalAccessException e) {
-            LOG.log(Level.SEVERE, ()-> "got exception trying to first start animation " + e.toString());
+            LOG.severe( ()-> "got exception trying to first start animation " + e.toString());
         }
 
     }
 
 
+    /**
+     * Actions to do on a key released
+     * For now it quits the program on ESC
+     * @param e the key event
+     */
     private void onKeyReleasedActions(KeyEvent e) {
         if (e.getCode() == KeyCode.ESCAPE) {
             mediaLoader.stop();
@@ -83,41 +99,12 @@ public class DiaporamaScreen extends Scene {
         }
     }
 
-    private Pane createVideoPane(){
-        videoNode.setPreserveRatio(true);
-
-        videoNode.setFitHeight(screen.getBounds().getHeight());
-        videoNode.setFitHeight(screen.getBounds().getWidth());
-
-        Pane videoPane = new Pane();
-        videoPane.getChildren().add(videoNode);
-
-        return videoPane;
-    }
-
-    private Pane createImagePane() {
-        imageNode.setPreserveRatio(true);
-
-        imageNode.setFitHeight(screen.getBounds().getHeight());
-        imageNode.setFitWidth(screen.getBounds().getWidth());
-
-        var imagePane = new Pane();
-        imagePane.getChildren().add(imageNode);
-        return imagePane;
-    }
-
-    private void linkBackgroundSizeToRootPane() {
-        root.setPrefSize(screen.getBounds().getWidth(), screen.getBounds().getHeight());
-
-        imageNode.fitHeightProperty().bind(root.heightProperty());
-        imageNode.fitWidthProperty().bind(root.widthProperty());
-
-        videoNode.fitHeightProperty().bind(root.heightProperty());
-        videoNode.fitWidthProperty().bind(root.widthProperty());
-    }
-
-
-    private VBox createCenteringPanesFor(Pane toCenter) {
+    /**
+     * sets the given pane in a pane that will keep it always centered
+     * @param toCenter the pane to keep centered
+     * @return The centered pane
+     */
+    private static Pane createCenteringPanesFor(Pane toCenter) {
         VBox verticalCentering = new VBox();
         verticalCentering.setAlignment(Pos.CENTER);
 
@@ -130,6 +117,11 @@ public class DiaporamaScreen extends Scene {
         return verticalCentering;
     }
 
+    /**
+     * choose and runs the next animation
+     * @throws InterruptedException a problem getting the next object to show
+     * @throws IllegalAccessException wasn't allowed to get the next video
+     */
     public void nextAnimation() throws InterruptedException, IllegalAccessException {
         int value = rdm.nextInt(1000);
 

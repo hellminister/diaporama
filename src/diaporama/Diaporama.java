@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The main class of the slide shower
+ */
 public class Diaporama extends Application {
 
     private static final Logger LOG = Logger.getLogger(Diaporama.class.getName());
@@ -19,6 +22,10 @@ public class Diaporama extends Application {
 
     private MediaLoader media;
 
+    /**
+     * the main function of the application
+     * @param primaryStage the primary stage of the application
+     */
     @Override
     public void start(Stage primaryStage) {
         var param = getParameters().getRaw();
@@ -34,6 +41,7 @@ public class Diaporama extends Application {
 
         var screens = Screen.getScreens();
 
+        // creates 1 stage per screen
         if (screens.size() == 1){
             setStage(stages.get(0), screens.get(0));
         } else {
@@ -51,6 +59,13 @@ public class Diaporama extends Application {
         }
     }
 
+    /**
+     * Attaches a scene to a stage
+     * links it to a screen
+     * sets the stage
+     * @param stage the stage to set
+     * @param screen the screen to attach to the stage
+     */
     private void setStage(Stage stage, Screen screen) {
         stage.initStyle(StageStyle.UNDECORATED);
 

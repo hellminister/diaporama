@@ -2,7 +2,6 @@ package diaporama.medialoader.loaders;
 
 import diaporama.views.DiaporamaScreen;
 import diaporama.ProgramParameters;
-import diaporama.medialoader.QueueFiller;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
@@ -15,8 +14,9 @@ import java.util.logging.Logger;
  */
 public class VideoLoader extends Loader<MediaPlayer> {
     private static final Logger LOG = Logger.getLogger(VideoLoader.class.getName());
-    private final Object lock;
-    private DiaporamaScreen using;
+
+    private final Object lock;      // a lock to synchronize access
+    private DiaporamaScreen using;  // the current user of this loader, null if there's none
 
     public VideoLoader(ProgramParameters param) {
         super(new QueueFiller<>(param.getVideoQueueSize(), param.getVideoRandom()) {
@@ -30,6 +30,12 @@ public class VideoLoader extends Loader<MediaPlayer> {
         lock = new Object();
     }
 
+    /**
+     * check if the caller (hopefully) can use this
+     * and if true, takes ownership
+     * @param ds the caller (hopefully)
+     * @return true if the owner is the caller or there's no owner, else false
+     */
     public synchronized boolean canUse(DiaporamaScreen ds) {
         synchronized (lock) {
             if (!isEmpty()) {
@@ -48,6 +54,10 @@ public class VideoLoader extends Loader<MediaPlayer> {
         }
     }
 
+    /**
+     * releases ownership if the caller (hopefully) owns it
+     * @param ds the caller (hopefully)
+     */
     public synchronized void release(DiaporamaScreen ds){
         synchronized (lock) {
             if (using == ds){
@@ -59,12 +69,24 @@ public class VideoLoader extends Loader<MediaPlayer> {
         }
     }
 
+    /**
+     * This is the Loader getNext that is overridden to block its use
+     * This is to respect the ownership
+     * @return null ALWAYS!
+     */
     @Override
     public MediaPlayer getNext() {
         LOG.severe(() -> "I dont have your identity, so i dont trust you. sending null");
         return null;
     }
 
+    /**
+     * Gives the next MediaPlayer to play if the caller (hopefully) is the owner
+     * @param ds the caller (hopefully)
+     * @return  The MediaPlayer to play
+     * @throws InterruptedException     If no MediaPlayer is available after a certain thing
+     * @throws IllegalAccessException   If the caller doesn't owe the lock
+     */
     public MediaPlayer getNext(DiaporamaScreen ds) throws InterruptedException, IllegalAccessException {
         synchronized (lock){
             if (using == ds){

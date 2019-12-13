@@ -37,16 +37,19 @@ public class VideoTransitioning {
 
         currentPlaying = ds;
 
+        // Fade in
         FadeTransition sft = new FadeTransition(Duration.millis(parameters.getVideoFadeTime()));
         sft.setFromValue(0.0);
         sft.setToValue(1.0);
         sft.setCycleCount(1);
 
+        // Keep video on screen
         mft = new FadeTransition();
         mft.setFromValue(1.0);
         mft.setToValue(1.0);
         mft.setCycleCount(1);
 
+        // Fade out
         FadeTransition eft = new FadeTransition(Duration.millis(parameters.getVideoFadeTime()));
         eft.setFromValue(1.0);
         eft.setToValue(0.0);
@@ -65,6 +68,11 @@ public class VideoTransitioning {
         });
     }
 
+    /**
+     * prepares and starts the Video to play
+     * @throws InterruptedException was unable to get a video to play
+     * @throws IllegalAccessException wasn't allowed to get a video to play
+     */
     public void prepareAndStart() throws InterruptedException, IllegalAccessException {
         MediaPlayer mp = producer.getNext(currentPlaying);
         media.setMediaPlayer(mp);
@@ -85,18 +93,21 @@ public class VideoTransitioning {
 
         if (mp.getStatus() != MediaPlayer.Status.READY) {
             mp.setOnReady(() -> {
-                LOG.info(() -> "Buffering mediaPlayer");
+                LOG.fine(() -> "Buffering mediaPlayer");
                 doOnceReady(mp);
             });
         } else {
-            LOG.info(() -> "Buffering mediaPlayer after ready" );
+            LOG.fine(() -> "Buffering mediaPlayer after ready" );
             doOnceReady(mp);
         }
     }
 
+    /**
+     * Sets and prepares the different parts of the transition once the MediaPlayer got all its info
+     * @param mp the MediaPlayer on which we are waiting
+     */
     private void doOnceReady(MediaPlayer mp) {
         buffering(mp);
-
         mp.setAutoPlay(true);
 
         mft.setDuration(mp.getMedia().getDuration());
@@ -105,6 +116,10 @@ public class VideoTransitioning {
         transition.playFromStart();
     }
 
+    /**
+     * Gets at least the time specified in the setup file in the buffer
+     * @param mp the MediaPlayer to buffer
+     */
     private void buffering(MediaPlayer mp) {
         boolean enoughBuffer;
         do {
@@ -124,10 +139,16 @@ public class VideoTransitioning {
         } while (!enoughBuffer);
     }
 
+    /**
+     * @return The Node that can show the video
+     */
     public MediaView getView(){
         return media;
     }
 
+    /**
+     * @return whether this transition can be used
+     */
     boolean canUse(){
         return producer.canUse(currentPlaying);
     }
