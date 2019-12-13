@@ -3,7 +3,7 @@
 ; while getting files, duplicates are not added
 ##Paths
 Z:/photo
-Z:/Video/Avril 2017
+Z:/Video
 
 ; image extension to treat, 1 extension per line
 ##Image-Extensions
@@ -16,11 +16,40 @@ Z:/Video/Avril 2017
 ##Video-Extensions
 .mp4
 
+; sets the type of transitions to use between Images
+; FADE : fades in and out
+; SCALE : scales in and out
+; SCALE_HOR : scales horizontally in and out
+; SCALE_VERT : scales vertically
+; LinkedRandom : choose a transition type randomly using the same for in and out
+; Random : Choose a transition randomly, one for in and one for out
+; default value = LinkedRandom
+##ImageTransitionType
+FADE
+
 ; the time the image will fade in or out in milliseconds
 ; place only 1 value - only the last value will be used
 ; default value = 500
 ##ImageFadeTime
 500
+
+; the time the image will scale in or out in milliseconds
+; place only 1 value - only the last value will be used
+; default value = 500
+##ImageScaleTime
+1000
+
+; the time the image will scale horizontally in or out in milliseconds
+; place only 1 value - only the last value will be used
+; default value = 500
+##ImageScaleHorTime
+1000
+
+; the time the image will scale vertically in or out in milliseconds
+; place only 1 value - only the last value will be used
+; default value = 500
+##ImageScaleVertTime
+1000
 
 ; the time the image will stay on screen in milliseconds
 ; place only 1 value - only the last value will be used

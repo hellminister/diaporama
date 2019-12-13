@@ -4,6 +4,7 @@ import diaporama.ProgramParameters;
 import diaporama.medialoader.loaders.VideoLoader;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
+import javafx.scene.image.ImageView;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.util.Duration;
@@ -14,14 +15,10 @@ import java.util.logging.Logger;
  * This class takes care of starting/controlling videos and the transition at the start and end of it
  * Only 1 of the instances created can play at a time
  */
-public class VideoTransitioning {
+public class VideoTransitioning extends Transitioning<MediaView, VideoLoader>{
     private static final Logger LOG = Logger.getLogger(VideoTransitioning.class.getName());
 
-    private final SequentialTransition transition;
-    private final MediaView media;
-    private final VideoLoader producer;
     private final FadeTransition mft;
-    private final DiaporamaScreen currentPlaying;
     private final Duration bufferingTime;
 
     /**
@@ -31,11 +28,8 @@ public class VideoTransitioning {
      * @param parameters The parameters of the program
      */
     VideoTransitioning(VideoLoader videoLoader, DiaporamaScreen ds, ProgramParameters parameters) {
-        media = new MediaView();
-        producer = videoLoader;
+        super(videoLoader, new MediaView(), ds);
         bufferingTime = Duration.seconds(parameters.getVideoBufferingTime());
-
-        currentPlaying = ds;
 
         // Fade in
         FadeTransition sft = new FadeTransition(Duration.millis(parameters.getVideoFadeTime()));
@@ -55,17 +49,12 @@ public class VideoTransitioning {
         eft.setToValue(0.0);
         eft.setCycleCount(1);
 
-        transition = new SequentialTransition(sft, mft, eft);
-        transition.setNode(media);
+        transition.getChildren().addAll(sft, mft, eft);
+    }
 
-        transition.setOnFinished(e -> {
-            try {
-                producer.release(currentPlaying);
-                currentPlaying.nextAnimation();
-            } catch (InterruptedException | IllegalAccessException ex) {
-                LOG.severe(ex::toString);
-            }
-        });
+    @Override
+    protected void actionsOnFinished() {
+        producer.release(currentPlaying);
     }
 
     /**
@@ -73,9 +62,15 @@ public class VideoTransitioning {
      * @throws InterruptedException was unable to get a video to play
      * @throws IllegalAccessException wasn't allowed to get a video to play
      */
+    @Override
     public void prepareAndStart() throws InterruptedException, IllegalAccessException {
+        changeMediaToShow();
+    }
+
+    @Override
+    protected void changeMediaToShow() throws InterruptedException, IllegalAccessException {
         MediaPlayer mp = producer.getNext(currentPlaying);
-        media.setMediaPlayer(mp);
+        shower.setMediaPlayer(mp);
 
         LOG.fine(() -> "preparing video to play " + mp.getStatus());
 
@@ -101,6 +96,7 @@ public class VideoTransitioning {
             doOnceReady(mp);
         }
     }
+
 
     /**
      * Sets and prepares the different parts of the transition once the MediaPlayer got all its info
@@ -137,13 +133,6 @@ public class VideoTransitioning {
                 }
             }
         } while (!enoughBuffer);
-    }
-
-    /**
-     * @return The Node that can show the video
-     */
-    public MediaView getView(){
-        return media;
     }
 
     /**

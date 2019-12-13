@@ -4,6 +4,7 @@ import diaporama.ProgramParameters;
 import diaporama.medialoader.MediaLoader;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -24,7 +25,7 @@ public class DiaporamaScreen extends Scene {
 
     private final MediaLoader mediaLoader;
 
-    private final ImageTransitioning imageTransition;
+    private final RandomImageTransitioning imageTransition;
     private final VideoTransitioning videoTransition;
 
     private final Random rdm;
@@ -50,16 +51,13 @@ public class DiaporamaScreen extends Scene {
         root.setStyle("-fx-background-color: black");
         root.setPrefSize(screen.getBounds().getWidth(), screen.getBounds().getHeight());
 
-        imageTransition = new ImageTransitioning(mediaLoader.getImageLoader(), this, param);
+        imageTransition = new RandomImageTransitioning(mediaLoader.getImageLoader(), this, param);
 
         // sets the Node that will contains Images/Photos
         var imageNode = imageTransition.getView();
         imageNode.setPreserveRatio(true);
         imageNode.fitHeightProperty().bind(root.heightProperty());
         imageNode.fitWidthProperty().bind(root.widthProperty());
-
-        Pane imagePane = new Pane();
-        imagePane.getChildren().add(imageNode);
 
         videoTransition = new VideoTransitioning(mediaLoader.getVideoLoader(), this, param);
 
@@ -69,12 +67,8 @@ public class DiaporamaScreen extends Scene {
         videoNode.fitHeightProperty().bind(root.heightProperty());
         videoNode.fitWidthProperty().bind(root.widthProperty());
 
-        Pane videoPane = new Pane();
-        videoPane.getChildren().add(videoNode);
-
-
-        root.getChildren().add(createCenteringPanesFor(imagePane));
-        root.getChildren().add(createCenteringPanesFor(videoPane));
+        root.getChildren().add(createCenteringPanesFor(imageNode));
+        root.getChildren().add(createCenteringPanesFor(videoNode));
 
         setOnKeyReleased(this::onKeyReleasedActions);
 
@@ -104,7 +98,10 @@ public class DiaporamaScreen extends Scene {
      * @param toCenter the pane to keep centered
      * @return The centered pane
      */
-    private static Pane createCenteringPanesFor(Pane toCenter) {
+    private static Pane createCenteringPanesFor(Node toCenter) {
+        Pane container = new Pane();
+        container.getChildren().add(toCenter);
+
         VBox verticalCentering = new VBox();
         verticalCentering.setAlignment(Pos.CENTER);
 
@@ -112,7 +109,7 @@ public class DiaporamaScreen extends Scene {
         horizontalCentering.setAlignment(Pos.CENTER);
 
         verticalCentering.getChildren().add(horizontalCentering);
-        horizontalCentering.getChildren().add(toCenter);
+        horizontalCentering.getChildren().add(container);
 
         return verticalCentering;
     }

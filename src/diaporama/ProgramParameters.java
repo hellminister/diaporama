@@ -19,6 +19,9 @@ public final class ProgramParameters {
     private final Set<String> paths;
     private final Map<String, String> extensions;
     private final double imageFadeTime;
+    private final double imageScaleTime;
+    private final double imageScaleHorTime;
+    private final double imageScaleVertTime;
     private final double videoFadeTime;
     private final double imageShowTime;
     private final boolean videoRandom;
@@ -28,6 +31,7 @@ public final class ProgramParameters {
     private final int videoStartChance;
     private final double videoBufferingTime;
     private final Duration filePathUpdateTime;
+    private final String imageTransitionType;
 
     /**
      * Reads the files and sets the values of the program parameters
@@ -39,6 +43,9 @@ public final class ProgramParameters {
         var dirDefault = new HashSet<String>();
         var extDefault = new HashMap<String, String>();
         var imFadeTimeDefault = 500d;
+        var imScaleTimeDefault = 500d;
+        var imScaleHorTimeDefault = 500d;
+        var imScaleVertTimeDefault = 500d;
         var imShowTimeDefault = 4000d;
         var vidFadeTimeDefault = 500d;
         var vidRdmDefault = true;
@@ -48,6 +55,7 @@ public final class ProgramParameters {
         var vidStartChanceDefault = 100;
         var vidBufferingTimeDefault = 10.0;
         var filePathUpdateDefault = Duration.ofDays(1);
+        var imageTransitionTypeDefault = "LinkedRandom";
 
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(setupPath)))){
             String line = reader.readLine();
@@ -72,6 +80,15 @@ public final class ProgramParameters {
                             break;
                         case "ImageFadeTime" :
                             imFadeTimeDefault = Double.parseDouble(line);
+                            break;
+                        case "ImageScaleTime" :
+                            imScaleTimeDefault = Double.parseDouble(line);
+                            break;
+                        case "ImageScaleHorTime" :
+                            imScaleHorTimeDefault = Double.parseDouble(line);
+                            break;
+                        case "ImageScaleVertTime" :
+                            imScaleVertTimeDefault = Double.parseDouble(line);
                             break;
                         case "ImageShowTime" :
                             imShowTimeDefault = Double.parseDouble(line);
@@ -100,6 +117,9 @@ public final class ProgramParameters {
                         case "File-Paths-Update-Time":
                             filePathUpdateDefault = Duration.parse(line);
                             break;
+                        case "ImageTransitionType":
+                            imageTransitionTypeDefault = line;
+                            break;
                         default:
                             String finalTreatingSection = treatingSection;
                             String finalLine = line;
@@ -118,6 +138,9 @@ public final class ProgramParameters {
         paths = Collections.unmodifiableSet(dirDefault);
         extensions = Collections.unmodifiableMap(extDefault);
         imageFadeTime = imFadeTimeDefault;
+        imageScaleTime = imScaleTimeDefault;
+        imageScaleHorTime = imScaleHorTimeDefault;
+        imageScaleVertTime = imScaleVertTimeDefault;
         imageShowTime = imShowTimeDefault;
         videoFadeTime = vidFadeTimeDefault;
         imageRandom = imRdmDefault;
@@ -127,10 +150,14 @@ public final class ProgramParameters {
         videoStartChance = vidStartChanceDefault;
         videoBufferingTime = vidBufferingTimeDefault;
         filePathUpdateTime = filePathUpdateDefault;
+        imageTransitionType = imageTransitionTypeDefault;
 
         LOG.info(() -> "Paths                 " + paths.toString() + ls +
                        "Extensions            " + extensions.toString() + ls +
                        "Image Fade Time       " + imageFadeTime + ls +
+                       "Image Show Time       " + imageScaleTime + ls +
+                       "Image Show_Hor Time   " + imageScaleHorTime + ls +
+                       "Image Show_Vert Time  " + imageScaleVertTime + ls +
                        "Image Show Time       " + imageShowTime + ls +
                        "Video Fade Time       " + videoFadeTime + ls +
                        "Random Image?         " + imageRandom + ls +
@@ -139,7 +166,8 @@ public final class ProgramParameters {
                        "Video Queue Size      " + videoQueueSize + ls +
                        "Video Starting Chance " + videoStartChance + ls +
                        "Video Buffering Time  " + videoBufferingTime + ls +
-                       "Filepath Update Time  " + filePathUpdateTime + ls);
+                       "Filepath Update Time  " + filePathUpdateTime + ls +
+                       "Image Transition Type " + imageTransitionType + ls);
 
     }
 
@@ -168,6 +196,30 @@ public final class ProgramParameters {
      */
     public double getImageFadeTime() {
         return imageFadeTime;
+    }
+
+    /**
+     * ##ImageScaleTime
+     * @return The time it take for the image to scale in or out
+     */
+    public double getImageScaleTime() {
+        return imageScaleTime;
+    }
+
+    /**
+     * ##ImageScaleHorTime
+     * @return The time it take for the image to scale horizontally in or out
+     */
+    public double getImageScaleHorTime() {
+        return imageScaleHorTime;
+    }
+
+    /**
+     * ##ImageScaleVertTime
+     * @return The time it take for the image to scale vertically in or out
+     */
+    public double getImageScaleVertTime() {
+        return imageScaleVertTime;
     }
 
     /**
@@ -241,4 +293,11 @@ public final class ProgramParameters {
     public long getUpdateTime() {
         return filePathUpdateTime.toMillis();
     }
+
+    /**
+     * ##ImageTransitionType
+     * a string with one of the value from Type.java or Random or LinkedRandom
+     * @return The transition to use with images
+     */
+    public String getImageTransitionType() { return imageTransitionType;}
 }
