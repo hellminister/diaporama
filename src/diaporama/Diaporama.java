@@ -2,6 +2,8 @@ package diaporama;
 
 import diaporama.medialoader.MediaLoader;
 import diaporama.views.DiaporamaScreen;
+import diaporama.views.ScreenSleeper;
+import diaporama.views.WindowsScreenSleeperRun;
 import javafx.application.Application;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -41,21 +43,33 @@ public class Diaporama extends Application {
 
         var screens = Screen.getScreens();
 
+
+        var lds = new LinkedList<DiaporamaScreen>();
+
         // creates 1 stage per screen
         if (screens.size() == 1){
-            setStage(stages.get(0), screens.get(0));
+            var ds = setStage(stages.get(0), screens.get(0));
+            lds.add(ds);
         } else {
             boolean first = true;
             for (Screen screen : screens){
                 if (first){
-                    setStage(stages.get(0), screen);
+                    var ds = setStage(stages.get(0), screen);
                     first = false;
+                    lds.add(ds);
                 } else {
                     Stage stage = new Stage();
                     stages.add(stage);
-                    setStage(stage, screen);
+                    var ds = setStage(stage, screen);
+                    lds.add(ds);
                 }
             }
+        }
+
+        ScreenSleeper ss = new ScreenSleeper(parameters, lds);
+
+        for (var ds : lds){
+            ds.registerSleeper(ss);
         }
     }
 
@@ -66,15 +80,19 @@ public class Diaporama extends Application {
      * @param stage the stage to set
      * @param screen the screen to attach to the stage
      */
-    private void setStage(Stage stage, Screen screen) {
+    private DiaporamaScreen setStage(Stage stage, Screen screen) {
         stage.initStyle(StageStyle.UNDECORATED);
 
-        stage.setScene(new DiaporamaScreen(media, screen, parameters));
+        var ds = new DiaporamaScreen(media, screen, parameters);
+
+        stage.setScene(ds);
         stage.sizeToScene();
         stage.setX(screen.getBounds().getMinX());
         stage.setY(screen.getBounds().getMinY());
 
         stage.show();
+
+        return ds;
     }
 
     public static void main(String[] args) {

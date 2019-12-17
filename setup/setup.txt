@@ -106,3 +106,9 @@ true
 ; default value = 1 day
 ##File-Paths-Update-Time
 P1D
+
+##ScreenSleep
+22:00
+
+##ScreenWake
+5:00

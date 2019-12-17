@@ -72,4 +72,8 @@ public abstract class Transitioning<T extends Node, R extends Loader<?>> {
     public T getView(){
         return shower;
     }
+
+    public abstract void pause();
+
+    public abstract void unpause();
 }

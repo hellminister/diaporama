@@ -32,6 +32,8 @@ public final class ProgramParameters {
     private final double videoBufferingTime;
     private final Duration filePathUpdateTime;
     private final String imageTransitionType;
+    private final List<String> sleepTime;
+    private final List<String> wakeTime;
 
     /**
      * Reads the files and sets the values of the program parameters
@@ -56,6 +58,8 @@ public final class ProgramParameters {
         var vidBufferingTimeDefault = 10.0;
         var filePathUpdateDefault = Duration.ofDays(1);
         var imageTransitionTypeDefault = "LinkedRandom";
+        var sleepTimeDefault = new LinkedList<String>();
+        var wakeTimeDefault = new LinkedList<String>();
 
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(setupPath)))){
             String line = reader.readLine();
@@ -120,6 +124,12 @@ public final class ProgramParameters {
                         case "ImageTransitionType":
                             imageTransitionTypeDefault = line;
                             break;
+                        case "ScreenSleep":
+                            sleepTimeDefault.add(line);
+                            break;
+                        case "ScreenWake":
+                            wakeTimeDefault.add(line);
+                            break;
                         default:
                             String finalTreatingSection = treatingSection;
                             String finalLine = line;
@@ -151,6 +161,9 @@ public final class ProgramParameters {
         videoBufferingTime = vidBufferingTimeDefault;
         filePathUpdateTime = filePathUpdateDefault;
         imageTransitionType = imageTransitionTypeDefault;
+        sleepTime = Collections.unmodifiableList(sleepTimeDefault);
+        wakeTime = Collections.unmodifiableList(wakeTimeDefault);
+
 
         LOG.info(() -> "Paths                 " + paths.toString() + ls +
                        "Extensions            " + extensions.toString() + ls +
@@ -167,7 +180,9 @@ public final class ProgramParameters {
                        "Video Starting Chance " + videoStartChance + ls +
                        "Video Buffering Time  " + videoBufferingTime + ls +
                        "Filepath Update Time  " + filePathUpdateTime + ls +
-                       "Image Transition Type " + imageTransitionType + ls);
+                       "Image Transition Type " + imageTransitionType + ls +
+                       "Sleeping Times        " + sleepTime + ls +
+                       "Waking Times          " + wakeTime + ls);
 
     }
 
@@ -300,4 +315,12 @@ public final class ProgramParameters {
      * @return The transition to use with images
      */
     public String getImageTransitionType() { return imageTransitionType;}
+
+    public List<String> getSleepTime() {
+        return sleepTime;
+    }
+
+    public List<String> getWakeTime() {
+        return wakeTime;
+    }
 }

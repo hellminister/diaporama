@@ -32,6 +32,9 @@ public class DiaporamaScreen extends Scene {
 
     private final int videoStartChance;
 
+    private Transitioning<?, ?> current;
+    private ScreenSleeper screenSleeper;
+
     /**
      * creates the slide show scene
      * @param media the media loader to use
@@ -89,6 +92,7 @@ public class DiaporamaScreen extends Scene {
     private void onKeyReleasedActions(KeyEvent e) {
         if (e.getCode() == KeyCode.ESCAPE) {
             mediaLoader.stop();
+            screenSleeper.stop();
             Platform.exit();
         }
     }
@@ -124,11 +128,25 @@ public class DiaporamaScreen extends Scene {
 
         if (value <= videoStartChance && (videoTransition.canUse())){
             LOG.info(() -> this + " chose a video");
-            videoTransition.prepareAndStart();
+            current = videoTransition;
         } else {
             LOG.info(() -> this + " chose a photo");
-            imageTransition.prepareAndStart();
+            current = imageTransition;
         }
 
+        current.prepareAndStart();
+
+    }
+
+    public void pause() {
+        current.pause();
+    }
+
+    public void unpause() {
+        current.unpause();
+    }
+
+    public void registerSleeper(ScreenSleeper ss) {
+        screenSleeper = ss;
     }
 }

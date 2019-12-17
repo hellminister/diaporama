@@ -90,4 +90,14 @@ public class RandomImageTransitioning extends Transitioning<ImageView, ImageLoad
         transition.getChildren().addAll(start, showTransition, end);
     }
 
+    @Override
+    public void pause() {
+        transition.pause();
+    }
+
+    @Override
+    public void unpause() {
+        transition.play();
+    }
+
 }

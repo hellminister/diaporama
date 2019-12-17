@@ -141,4 +141,16 @@ public class VideoTransitioning extends Transitioning<MediaView, VideoLoader>{
     boolean canUse(){
         return producer.canUse(currentPlaying);
     }
+
+    @Override
+    public synchronized void pause() {
+        transition.pause();
+        shower.getMediaPlayer().pause();
+    }
+
+    @Override
+    public synchronized void unpause() {
+        transition.play();
+        shower.getMediaPlayer().play();
+    }
 }
