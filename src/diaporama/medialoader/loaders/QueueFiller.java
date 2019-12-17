@@ -1,10 +1,11 @@
 package diaporama.medialoader.loaders;
 
+import javafx.scene.media.MediaException;
+
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -71,25 +72,26 @@ public abstract class QueueFiller<T> implements Runnable{
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                LOG.log(Level.SEVERE, e::toString);
+                LOG.severe(e::toString);
             }
         }
 
         while (running.get()){
             String fileName = fileChoices.getFiles().get(getNextIndex());
-            LOG.log(Level.FINE,
-                    () -> fileChoices.getClass().getName() + " will offer " + fileName + " " + queue.size());
+            LOG.fine(() -> fileChoices.getClass().getName() + " will offer " + fileName + " " + queue.size());
             try {
                 // Inserts the generated object in the queue when there's space
                 queue.offer(generateMedia(fileName), 5, TimeUnit.MINUTES);
-                LOG.log(Level.FINE, () -> fileChoices.getClass().getName() + " offers " + fileName);
+                LOG.fine(() -> fileChoices.getClass().getName() + " offers " + fileName);
             } catch (InterruptedException e) {
-                LOG.log(Level.INFO,
-                        () -> "took too long before a space is available, might try a new one " + fileChoices.getClass().getName() + " " + fileName + "\n" + e.toString());
+                LOG.info(() -> "Took too long before a space is available, might try a new one " + fileChoices.getClass().getName() + " " + fileName + "\n" + e.toString());
+            } catch (IllegalArgumentException | UnsupportedOperationException | MediaException ex) {
+                LOG.info(() -> "Problem with " + fileName + "! Removing from list.");
+                fileChoices.getFiles().remove(fileName);
             }
 
         }
-        LOG.log(Level.FINE, () -> fileChoices.getClass().getName() + " queue stopped");
+        LOG.fine(() -> fileChoices.getClass().getName() + " queue stopped");
 
     }
 
@@ -105,9 +107,9 @@ public abstract class QueueFiller<T> implements Runnable{
      * @throws InterruptedException thrown if none is available within 5 seconds
      */
     public T get() throws InterruptedException {
-        LOG.log(Level.FINE, () -> fileChoices.getClass().getName() + " will send Media");
+        LOG.fine(() -> fileChoices.getClass().getName() + " will send Media");
         T toSend = queue.poll(5000, TimeUnit.MILLISECONDS);
-        LOG.log(Level.FINE, () -> fileChoices.getClass().getName() + " sending Media");
+        LOG.fine(() -> fileChoices.getClass().getName() + " sending Media");
         return toSend;
     }
 
