@@ -1,5 +1,5 @@
 # diaporama
-This is a simple java sliding show to make a raspberry pi into a digital frame
+This is a simple java sliding show
 
 Still waiting on the raspberry pi to test it, works on my computers
 
