@@ -35,6 +35,7 @@ public abstract class Transitioning<T extends Node, R extends Loader<?>> {
         transition.setOnFinished(e -> {
             try {
                 actionsOnFinished();
+                shower.setVisible(false);
                 currentPlaying.nextAnimation();
             } catch (Exception ex) {
                 LOG.severe(ex::toString);
@@ -57,6 +58,7 @@ public abstract class Transitioning<T extends Node, R extends Loader<?>> {
      */
     public void prepareAndStart() throws InterruptedException, IllegalAccessException {
         changeMediaToShow();
+        shower.setVisible(true);
         transition.playFromStart();
     }
 

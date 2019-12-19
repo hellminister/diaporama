@@ -65,6 +65,7 @@ public class VideoTransitioning extends Transitioning<MediaView, VideoLoader>{
     @Override
     public void prepareAndStart() throws InterruptedException, IllegalAccessException {
         changeMediaToShow();
+        shower.setVisible(true);
     }
 
     @Override
