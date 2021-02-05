@@ -15,7 +15,7 @@ public class ScreenSleeperFactory {
         switch (os){
             case "Windows 10":
                 LOG.info("Windows 10 sleeper");
-                ssr = new WindowsScreenSleeperRun();
+                ssr = new NothingScreenSleeperRun();
                 break;
             default:
                 ssr = new NothingScreenSleeperRun();
