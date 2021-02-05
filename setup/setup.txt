@@ -108,7 +108,7 @@ true
 P1D
 
 ##ScreenSleep
-22:00
+;22:00
 
 ##ScreenWake
-5:00
+;5:00

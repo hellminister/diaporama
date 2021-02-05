@@ -16,8 +16,8 @@ public class ImageLoader extends Loader<Image> {
         super(new QueueFiller<>(param.getImageQueueSize(), param.getImageRandom()) {
             @Override
             protected Image generateMedia(String fileName) {
-                LOG.log(Level.FINE, ()-> "generating image " + fileName);
-                return new Image(fileName);
+                LOG.log(Level.INFO, ()-> "generating image " + fileName);
+                return new Image(fileName, true);
             }
         });
     }

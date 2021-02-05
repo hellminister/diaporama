@@ -6,12 +6,15 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Screen;
 
 import java.util.Random;
@@ -58,9 +61,11 @@ public class DiaporamaScreen extends Scene {
 
         // sets the Node that will contains Images/Photos
         var imageNode = imageTransition.getView();
+
         imageNode.setPreserveRatio(true);
         imageNode.fitHeightProperty().bind(root.heightProperty());
         imageNode.fitWidthProperty().bind(root.widthProperty());
+
 
         videoTransition = new VideoTransitioning(mediaLoader.getVideoLoader(), this, param);
 

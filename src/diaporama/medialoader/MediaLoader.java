@@ -1,8 +1,9 @@
 package diaporama.medialoader;
 
 import diaporama.ProgramParameters;
-import diaporama.medialoader.loaders.ImageLoader;
-import diaporama.medialoader.loaders.VideoLoader;
+import diaporama.medialoader.loaders.*;
+import javafx.scene.image.Image;
+import javafx.scene.media.MediaPlayer;
 
 import java.nio.file.Paths;
 
@@ -16,8 +17,8 @@ import java.util.logging.Logger;
  */
 public class MediaLoader {
     private static final Logger LOG = Logger.getLogger(MediaLoader.class.getName());
-    private final ImageLoader imageLoader;
-    private final VideoLoader videoLoader;
+    private final Loader<Image> imageLoader;
+    private final LockableLoader<MediaPlayer> videoLoader;
 
     private final ScheduledExecutorService findersExecutor;
 
@@ -41,14 +42,14 @@ public class MediaLoader {
     /**
      * @return The object that manages the images
      */
-    public ImageLoader getImageLoader() {
+    public Loader<Image> getImageLoader() {
         return imageLoader;
     }
 
     /**
      * @return The object that manages the videos
      */
-    public VideoLoader getVideoLoader() {
+    public LockableLoader<MediaPlayer> getVideoLoader() {
         return videoLoader;
     }
 

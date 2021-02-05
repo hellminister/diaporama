@@ -1,6 +1,8 @@
 package diaporama.views;
 
 import diaporama.ProgramParameters;
+import diaporama.medialoader.loaders.Loader;
+import diaporama.medialoader.loaders.LockableLoader;
 import diaporama.medialoader.loaders.VideoLoader;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
@@ -15,7 +17,7 @@ import java.util.logging.Logger;
  * This class takes care of starting/controlling videos and the transition at the start and end of it
  * Only 1 of the instances created can play at a time
  */
-public class VideoTransitioning extends Transitioning<MediaView, VideoLoader>{
+public class VideoTransitioning extends Transitioning<MediaView, LockableLoader<MediaPlayer>>{
     private static final Logger LOG = Logger.getLogger(VideoTransitioning.class.getName());
 
     private final FadeTransition mft;
@@ -27,7 +29,7 @@ public class VideoTransitioning extends Transitioning<MediaView, VideoLoader>{
      * @param ds the screen to which this node is attached
      * @param parameters The parameters of the program
      */
-    VideoTransitioning(VideoLoader videoLoader, DiaporamaScreen ds, ProgramParameters parameters) {
+    VideoTransitioning(LockableLoader<MediaPlayer> videoLoader, DiaporamaScreen ds, ProgramParameters parameters) {
         super(videoLoader, new MediaView(), ds);
         bufferingTime = Duration.seconds(parameters.getVideoBufferingTime());
 

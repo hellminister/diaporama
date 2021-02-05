@@ -2,9 +2,11 @@ package diaporama.views;
 
 import diaporama.ProgramParameters;
 import diaporama.medialoader.loaders.ImageLoader;
+import diaporama.medialoader.loaders.Loader;
 import diaporama.views.transitions.Type;
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
@@ -15,7 +17,7 @@ import java.util.logging.Logger;
 /**
  * This class creates, manages and plays the starting and ending transition when an image changes
  */
-public class RandomImageTransitioning extends Transitioning<ImageView, ImageLoader> {
+public class RandomImageTransitioning extends Transitioning<ImageView, Loader<Image>> {
     private static final Logger LOG = Logger.getLogger(RandomImageTransitioning.class.getName());
 
     private final Map<Type, Animation> startTransition;
@@ -34,7 +36,7 @@ public class RandomImageTransitioning extends Transitioning<ImageView, ImageLoad
      * @param ds   the owning DiaporamaScreen
      * @param param  The program parameters
      */
-    protected RandomImageTransitioning(ImageLoader prod, DiaporamaScreen ds, ProgramParameters param) {
+    protected RandomImageTransitioning(Loader<Image> prod, DiaporamaScreen ds, ProgramParameters param) {
         super(prod, new ImageView(), ds);
 
         transitionType = param.getImageTransitionType();
