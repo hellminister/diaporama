@@ -1,6 +1,6 @@
 # diaporama
 This is a simple java sliding show
 
-Still waiting on the raspberry pi to test it, works on my computers
+works on my computers and rasberry pi
 
-uses java 13 and javafx 13
+uses java 11 and javafx 11
