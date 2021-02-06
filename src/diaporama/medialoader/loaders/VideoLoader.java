@@ -1,10 +1,11 @@
 package diaporama.medialoader.loaders;
 
-import diaporama.views.DiaporamaScreen;
 import diaporama.ProgramParameters;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
+import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.util.logging.Logger;
 
 /**
@@ -18,9 +19,14 @@ public class VideoLoader extends LockableLoader<MediaPlayer> {
     public VideoLoader(ProgramParameters param) {
         super(new QueueFiller<>(param.getVideoQueueSize(), param.getVideoRandom()) {
             @Override
-            protected MediaPlayer generateMedia(String fileName) {
+            protected MediaPlayer generateMedia(Path fileName) {
                 LOG.fine( ()-> "generating media " + fileName);
-                return new MediaPlayer(new Media(fileName));
+                try {
+                    return new MediaPlayer(new Media(fileName.toUri().toURL().toExternalForm()));
+                } catch (MalformedURLException e) {
+                    LOG.severe(e::toString);
+                }
+                return null;
             }
         });
 

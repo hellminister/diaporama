@@ -3,6 +3,8 @@ package diaporama.medialoader.loaders;
 import diaporama.ProgramParameters;
 import javafx.scene.image.Image;
 
+import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,9 +17,14 @@ public class ImageLoader extends Loader<Image> {
     public ImageLoader(ProgramParameters param) {
         super(new QueueFiller<>(param.getImageQueueSize(), param.getImageRandom()) {
             @Override
-            protected Image generateMedia(String fileName) {
+            protected Image generateMedia(Path fileName) {
                 LOG.log(Level.INFO, ()-> "generating image " + fileName);
-                return new Image(fileName, true);
+                try {
+                    return new Image(fileName.toUri().toURL().toExternalForm(), true);
+                } catch (MalformedURLException e) {
+                    LOG.severe(e::toString);
+                }
+                return null;
             }
         });
     }

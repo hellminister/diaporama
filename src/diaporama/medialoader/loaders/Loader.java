@@ -1,5 +1,6 @@
 package diaporama.medialoader.loaders;
 
+import java.nio.file.Path;
 import java.util.logging.Logger;
 
 /**
@@ -10,7 +11,7 @@ public class Loader<T> {
     private static final Logger LOG = Logger.getLogger(Loader.class.getName());
 
 
-    protected final DistinctArrayList<String> files;
+    protected final DistinctArrayList<Path> files;
     protected final QueueFiller<T> queueFiller;
 
 
@@ -35,7 +36,7 @@ public class Loader<T> {
      * Adds the given file path in the list
      * @param s the file path string
      */
-    public void addFileName(String s) {
+    public void addFileName(Path s) {
         LOG.fine( () -> this.getClass().getName() + " adds " + s);
         files.add(s);
     }
@@ -43,7 +44,7 @@ public class Loader<T> {
     /**
      * @return the list of files
      */
-    public DistinctArrayList<String> getFiles() {
+    public DistinctArrayList<Path> getFiles() {
         return files;
     }
 

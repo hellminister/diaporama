@@ -17,13 +17,13 @@ import java.util.logging.Logger;
  */
 public class MediaLoader {
     private static final Logger LOG = Logger.getLogger(MediaLoader.class.getName());
-    private final Loader<Image> imageLoader;
+    private final Loader<ImageWithInfo> imageLoader;
     private final LockableLoader<MediaPlayer> videoLoader;
 
     private final ScheduledExecutorService findersExecutor;
 
     public MediaLoader( ProgramParameters param ) {
-        imageLoader = new ImageLoader(param);
+        imageLoader = new ImageLoaderAWT(param);
         videoLoader = new VideoLoader(param);
 
         findersExecutor = Executors.newScheduledThreadPool(param.getPaths().size());
@@ -42,7 +42,7 @@ public class MediaLoader {
     /**
      * @return The object that manages the images
      */
-    public Loader<Image> getImageLoader() {
+    public Loader<ImageWithInfo> getImageLoader() {
         return imageLoader;
     }
 

@@ -2,6 +2,7 @@ package diaporama.views;
 
 import diaporama.ProgramParameters;
 import diaporama.medialoader.loaders.ImageLoader;
+import diaporama.medialoader.loaders.ImageWithInfo;
 import diaporama.medialoader.loaders.Loader;
 import diaporama.views.transitions.Type;
 import javafx.animation.Animation;
@@ -17,7 +18,7 @@ import java.util.logging.Logger;
 /**
  * This class creates, manages and plays the starting and ending transition when an image changes
  */
-public class RandomImageTransitioning extends Transitioning<ImageView, Loader<Image>> {
+public class RandomImageTransitioning extends Transitioning<ImageView, Loader<ImageWithInfo>> {
     private static final Logger LOG = Logger.getLogger(RandomImageTransitioning.class.getName());
 
     private final Map<Type, Animation> startTransition;
@@ -36,7 +37,7 @@ public class RandomImageTransitioning extends Transitioning<ImageView, Loader<Im
      * @param ds   the owning DiaporamaScreen
      * @param param  The program parameters
      */
-    protected RandomImageTransitioning(Loader<Image> prod, DiaporamaScreen ds, ProgramParameters param) {
+    protected RandomImageTransitioning(Loader<ImageWithInfo> prod, DiaporamaScreen ds, ProgramParameters param) {
         super(prod, new ImageView(), ds);
 
         transitionType = param.getImageTransitionType();
@@ -68,7 +69,11 @@ public class RandomImageTransitioning extends Transitioning<ImageView, Loader<Im
      */
     @Override
     protected void changeMediaToShow() throws InterruptedException {
-        shower.setImage(producer.getNext());
+        ImageWithInfo img = producer.getNext();
+        shower.setImage(img.getImage());
+
+        adjustView(shower, img.getOrientation());
+
         transition.getChildren().clear();
 
         Animation start;
@@ -90,6 +95,25 @@ public class RandomImageTransitioning extends Transitioning<ImageView, Loader<Im
         }
 
         transition.getChildren().addAll(start, showTransition, end);
+    }
+
+    private void adjustView(ImageView shower, int orientation) {
+        switch (orientation){
+            case 1:
+                shower.setRotate(0);
+                break;
+            case 3:
+                shower.setRotate(180);
+                break;
+            case 6:
+                shower.setRotate(90);
+                break;
+            case 8:
+                shower.setRotate(270);
+                break;
+            default:
+                LOG.severe("Orientation " + orientation + " not treated.");
+        }
     }
 
     @Override

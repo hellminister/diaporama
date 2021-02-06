@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="javafx11" level="project" />
     <orderEntry type="library" name="net.java.dev.jna:jna-platform:5.5.0" level="project" />
+    <orderEntry type="library" name="com.drewnoakes:metadata-extractor:2.15.0" level="project" />
   </component>
 </module>

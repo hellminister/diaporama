@@ -2,6 +2,7 @@ package diaporama.medialoader.loaders;
 
 import javafx.scene.media.MediaException;
 
+import java.nio.file.Path;
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -77,7 +78,7 @@ public abstract class QueueFiller<T> implements Runnable{
         }
 
         while (running.get()){
-            String fileName = fileChoices.getFiles().get(getNextIndex());
+            Path fileName = fileChoices.getFiles().get(getNextIndex());
             LOG.fine(() -> fileChoices.getClass().getName() + " will offer " + fileName + " " + queue.size());
             try {
                 // Inserts the generated object in the queue when there's space
@@ -100,7 +101,7 @@ public abstract class QueueFiller<T> implements Runnable{
      * @param fileName the filename of the object to generate
      * @return the generated object
      */
-    protected abstract T generateMedia(String fileName);
+    protected abstract T generateMedia(Path fileName);
 
     /**
      * @return the first item in the queue

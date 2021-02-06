@@ -1,6 +1,7 @@
 package diaporama.medialoader;
 
 import diaporama.ProgramParameters;
+import diaporama.medialoader.loaders.ImageWithInfo;
 import diaporama.medialoader.loaders.Loader;
 import javafx.scene.image.Image;
 import javafx.scene.media.MediaPlayer;
@@ -24,7 +25,7 @@ public class FileFinder implements Runnable {
 
     private final Path directory;
     private final Map<String,String> extensions;
-    private final Loader<Image> imageBag;
+    private final Loader<ImageWithInfo> imageBag;
     private final Loader<MediaPlayer> videoBag;
     private int ranXTime;
 
@@ -35,7 +36,7 @@ public class FileFinder implements Runnable {
      * @param videoBag the video manager
      * @param params the program parameters
      */
-    public FileFinder(Path directory, Loader<Image> imageBag,
+    public FileFinder(Path directory, Loader<ImageWithInfo> imageBag,
                       Loader<MediaPlayer> videoBag, ProgramParameters params) {
         this.directory = directory;
         this.extensions = params.getExtensions();
@@ -54,23 +55,28 @@ Optional<String> op;
 
             try (Stream<Path> walk = Files.walk(directory)) {
                 // an iterator that filters the files and returns the full path names in string
-                var toLoop = walk.filter(Files::isRegularFile).map(q -> {
-                    try {
-                        return q.toUri().toURL().toExternalForm();
-                    } catch (MalformedURLException e) {
-                        LOG.severe(() -> "Got a malformed url for " + q.toString() + "\n" + e.toString());
-                    }
-                    return "";
-                })
-                        .filter(Predicate.not(String::isBlank))
-                        .filter(s -> this.extensions.containsKey(s.toLowerCase().substring(s.lastIndexOf("."))))
+//                var toLoop = walk.filter(Files::isRegularFile).map(q -> {
+//                    try {
+//                        return q.toUri().toURL().toExternalForm();
+//                    } catch (MalformedURLException e) {
+//                        LOG.severe(() -> "Got a malformed url for " + q.toString() + "\n" + e.toString());
+//                    }
+//                    return "";
+//                })
+//                        .filter(Predicate.not(String::isBlank))
+//                        .filter(s -> this.extensions.containsKey(s.toLowerCase().substring(s.lastIndexOf("."))))
+//                        .iterator();
+
+                var toLoop = walk.filter(Files::isRegularFile)
+                     //   .filter(Predicate.not(String::isBlank))
+                        .filter(s -> this.extensions.containsKey(s.getFileName().toString().toLowerCase().substring(s.getFileName().toString().lastIndexOf("."))))
                         .iterator();
 
                 // collect all the found files to its proper container
                 // use of iterator and while loop so we can stop execution if the thread is interrupted
                 while (toLoop.hasNext() && !Thread.currentThread().isInterrupted()) {
-                    String s = toLoop.next();
-                    String ext = extensions.get(s.toLowerCase().substring(s.lastIndexOf(".")));
+                    Path s = toLoop.next();
+                    String ext = extensions.get(s.getFileName().toString().toLowerCase().substring(s.getFileName().toString().lastIndexOf(".")));
                     if ("Image".equals(ext)) {
                         imageBag.addFileName(s);
                     } else if ("Video".equals(ext)) {
