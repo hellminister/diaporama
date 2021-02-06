@@ -1,5 +1,7 @@
 package diaporama;
 
+import javafx.scene.paint.Color;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,6 +36,12 @@ public final class ProgramParameters {
     private final String imageTransitionType;
     private final List<String> sleepTime;
     private final List<String> wakeTime;
+    private final String clockFont;
+    private final double clockFontSize;
+    private final Color clockColor;
+    private final boolean showClock;
+    private final double clockTopDistance;
+    private final double clockLeftDistance;
 
     /**
      * Reads the files and sets the values of the program parameters
@@ -60,6 +68,12 @@ public final class ProgramParameters {
         var imageTransitionTypeDefault = "LinkedRandom";
         var sleepTimeDefault = new LinkedList<String>();
         var wakeTimeDefault = new LinkedList<String>();
+        var clockFontTemp = "Arial";
+        var clockFontSizeTemp = 72d;
+        var clockColorTemp = Color.CYAN;
+        var showClockTemp = false;
+        var clockTopDistanceTemp = 50.0;
+        var clockLeftDistanceTemp = 50.0;
 
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(setupPath)))){
             String line = reader.readLine();
@@ -130,6 +144,30 @@ public final class ProgramParameters {
                         case "ScreenWake":
                             wakeTimeDefault.add(line);
                             break;
+                        case "Show-Clock":
+                            showClockTemp = "true".equals(line);
+                            break;
+                        case "Clock-Font":
+                            clockFontTemp = line;
+                            break;
+                        case "Clock-Font-Size":
+                            clockFontSizeTemp = Double.parseDouble(line);
+                            break;
+                        case "Clock-Color":
+                            try {
+                                clockColorTemp = Color.valueOf(line.toUpperCase());
+                            } catch (Exception e) {
+                                clockColorTemp = Color.CYAN;
+                                String finalLine1 = line;
+                                LOG.warning(() -> "Couldn't read color : " + finalLine1 + " defaulting to CYAN");
+                            }
+                            break;
+                        case "Clock-Top":
+                            clockTopDistanceTemp = Double.parseDouble(line);
+                            break;
+                        case "Clock-Left":
+                            clockLeftDistanceTemp = Double.parseDouble(line);
+                            break;
                         default:
                             String finalTreatingSection = treatingSection;
                             String finalLine = line;
@@ -163,26 +201,38 @@ public final class ProgramParameters {
         imageTransitionType = imageTransitionTypeDefault;
         sleepTime = Collections.unmodifiableList(sleepTimeDefault);
         wakeTime = Collections.unmodifiableList(wakeTimeDefault);
+        clockFont = clockFontTemp;
+        clockFontSize = clockFontSizeTemp;
+        clockColor = clockColorTemp;
+        showClock = showClockTemp;
+        clockTopDistance = clockTopDistanceTemp;
+        clockLeftDistance = clockLeftDistanceTemp;
 
 
-        LOG.info(() -> "Paths                 " + paths.toString() + ls +
-                       "Extensions            " + extensions.toString() + ls +
-                       "Image Fade Time       " + imageFadeTime + ls +
-                       "Image Show Time       " + imageScaleTime + ls +
-                       "Image Show_Hor Time   " + imageScaleHorTime + ls +
-                       "Image Show_Vert Time  " + imageScaleVertTime + ls +
-                       "Image Show Time       " + imageShowTime + ls +
-                       "Video Fade Time       " + videoFadeTime + ls +
-                       "Random Image?         " + imageRandom + ls +
-                       "Random Video?         " + videoRandom + ls +
-                       "Image Queue Size      " + imageQueueSize + ls +
-                       "Video Queue Size      " + videoQueueSize + ls +
-                       "Video Starting Chance " + videoStartChance + ls +
-                       "Video Buffering Time  " + videoBufferingTime + ls +
-                       "Filepath Update Time  " + filePathUpdateTime + ls +
-                       "Image Transition Type " + imageTransitionType + ls +
-                       "Sleeping Times        " + sleepTime + ls +
-                       "Waking Times          " + wakeTime + ls);
+        LOG.info(() -> "Paths                    " + paths.toString() + ls +
+                       "Extensions               " + extensions.toString() + ls +
+                       "Image Fade Time          " + imageFadeTime + ls +
+                       "Image Show Time          " + imageScaleTime + ls +
+                       "Image Show_Hor Time      " + imageScaleHorTime + ls +
+                       "Image Show_Vert Time     " + imageScaleVertTime + ls +
+                       "Image Show Time          " + imageShowTime + ls +
+                       "Video Fade Time          " + videoFadeTime + ls +
+                       "Random Image?            " + imageRandom + ls +
+                       "Random Video?            " + videoRandom + ls +
+                       "Image Queue Size         " + imageQueueSize + ls +
+                       "Video Queue Size         " + videoQueueSize + ls +
+                       "Video Starting Chance    " + videoStartChance + ls +
+                       "Video Buffering Time     " + videoBufferingTime + ls +
+                       "Filepath Update Time     " + filePathUpdateTime + ls +
+                       "Image Transition Type    " + imageTransitionType + ls +
+                       "Sleeping Times           " + sleepTime + ls +
+                       "Waking Times             " + wakeTime + ls +
+                       "Show Clock               " + showClock + ls +
+                       "Clock Font               " + clockFont + ls +
+                       "Clock Font Size          " + clockFontSize + ls +
+                       "Clock Color              " + clockColor + ls +
+                       "Clock Distance from Top  " + clockTopDistance + ls +
+                       "Clock Distance from Left " + clockLeftDistance + ls);
 
     }
 
@@ -322,5 +372,29 @@ public final class ProgramParameters {
 
     public List<String> getWakeTime() {
         return wakeTime;
+    }
+
+    public String getClockFont() {
+        return clockFont;
+    }
+
+    public double getClockFontSize() {
+        return clockFontSize;
+    }
+
+    public Color getClockColor() {
+        return clockColor;
+    }
+
+    public boolean getShowClock() {
+        return showClock;
+    }
+
+    public double getClockTopDistance() {
+        return clockTopDistance;
+    }
+
+    public double getClockLeftDistance() {
+        return clockLeftDistance;
     }
 }

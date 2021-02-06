@@ -3,6 +3,7 @@ module diaporama {
     requires javafx.media;
     requires javafx.swing;
     requires metadata.extractor;
+    requires javafx.controls;
 
     exports diaporama;
 }

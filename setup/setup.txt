@@ -107,6 +107,37 @@ true
 ##File-Paths-Update-Time
 P1D
 
+; If we want a clock to appear on the screen
+; default value = false
+##Show-Clock
+true
+
+; This is the font to use to show time
+; default value = Arial
+##Clock-Font
+Arial
+
+; This is the size of font to use to show time
+; default value = 72
+##Clock-Font-Size
+72
+
+; This is to set the color of the clock
+; The name of the colors follow those defined in javafx.scene.paint.Color
+; the default value is Cyan
+##Clock-Color
+Cyan
+
+; This is the distance of the clock from the top of the screen
+; default value = 50 pixel
+##Clock-Top
+50
+
+; This is the distance of the clock from the left of the screen
+; default value = 50 pixel
+##Clock-Left
+50
+
 ##ScreenSleep
 ;22:00
 

@@ -2,21 +2,28 @@ package diaporama.views;
 
 import diaporama.ProgramParameters;
 import diaporama.medialoader.MediaLoader;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
 import javafx.stage.Screen;
+import javafx.util.Duration;
 
+
+import javafx.scene.control.Label;
+
+import java.time.LocalTime;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -78,6 +85,11 @@ public class DiaporamaScreen extends Scene {
         root.getChildren().add(createCenteringPanesFor(imageNode));
         root.getChildren().add(createCenteringPanesFor(videoNode));
 
+        var infoPane = createInfoPane(param);
+
+        root.getChildren().add(infoPane);
+        infoPane.toFront();
+
         setOnKeyReleased(this::onKeyReleasedActions);
 
         try {
@@ -86,6 +98,36 @@ public class DiaporamaScreen extends Scene {
             LOG.severe( ()-> "got exception trying to first start animation " + e.toString());
         }
 
+    }
+
+    private AnchorPane createInfoPane(ProgramParameters param) {
+        var infoPane = new AnchorPane();
+        infoPane.setStyle("-fx-background-color: transparent");
+
+        if (param.getShowClock()) {
+            createClock(param, infoPane);
+        }
+
+        return infoPane;
+    }
+
+    private void createClock(ProgramParameters param, AnchorPane infoPane) {
+        Label time = new Label();
+        time.setTextFill(param.getClockColor());
+        time.setFont(new Font(param.getClockFont(), param.getClockFontSize()));
+
+        Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
+            LocalTime currentTime = LocalTime.now();
+            time.setText(currentTime.getHour() + ":" + currentTime.getMinute());
+        }),
+                new KeyFrame(Duration.seconds(1))
+        );
+        clock.setCycleCount(Animation.INDEFINITE);
+        clock.play();
+
+        infoPane.getChildren().addAll(time);
+        AnchorPane.setTopAnchor(time, param.getClockTopDistance());
+        AnchorPane.setLeftAnchor(time, param.getClockLeftDistance());
     }
 
 
