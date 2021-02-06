@@ -1,6 +1,15 @@
 # diaporama
 This is a simple java sliding show
 
-Still waiting on the raspberry pi to test it, works on my computers
+works on my computers and rasberry pi
 
-uses java 13 and javafx 13
+uses java 11 and javafx 11
+
+also need the metadata extractor librairy from drewnoakes v2.15.0
+
+maven info for the extractor:
+<dependency>
+  <groupId>com.drewnoakes</groupId>
+  <artifactId>metadata-extractor</artifactId>
+  <version>2.15.0</version>
+</dependency>
