@@ -42,6 +42,9 @@ public final class ProgramParameters {
     private final boolean showClock;
     private final double clockTopDistance;
     private final double clockLeftDistance;
+    private final Color clockBackgroundColor;
+    private final double clockBackgroundOpacity;
+    private final double clockOpacity;
 
     /**
      * Reads the files and sets the values of the program parameters
@@ -74,6 +77,9 @@ public final class ProgramParameters {
         var showClockTemp = false;
         var clockTopDistanceTemp = 50.0;
         var clockLeftDistanceTemp = 50.0;
+        var clockBackgroundColorTemp = Color.BLACK;
+        var clockBackgroundOpacityTemp = 0.5d;
+        var clockOpacityTemp = 1d;
 
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(setupPath)))){
             String line = reader.readLine();
@@ -168,6 +174,21 @@ public final class ProgramParameters {
                         case "Clock-Left":
                             clockLeftDistanceTemp = Double.parseDouble(line);
                             break;
+                        case "Clock-Background-Color":
+                            try {
+                                clockBackgroundColorTemp = Color.valueOf(line.toUpperCase());
+                            } catch (Exception e) {
+                                clockBackgroundColorTemp = Color.BLACK;
+                                String finalLine1 = line;
+                                LOG.warning(() -> "Couldn't read color : " + finalLine1 + " defaulting to BLACK");
+                            }
+                            break;
+                        case "Clock-Background-Opacity":
+                            clockBackgroundOpacityTemp = Double.parseDouble(line);
+                            break;
+                        case "Clock-Opacity":
+                            clockOpacityTemp = Double.parseDouble(line);
+                            break;
                         default:
                             String finalTreatingSection = treatingSection;
                             String finalLine = line;
@@ -207,6 +228,9 @@ public final class ProgramParameters {
         showClock = showClockTemp;
         clockTopDistance = clockTopDistanceTemp;
         clockLeftDistance = clockLeftDistanceTemp;
+        clockBackgroundColor = clockBackgroundColorTemp;
+        clockBackgroundOpacity = clockBackgroundOpacityTemp;
+        clockOpacity = clockOpacityTemp;
 
 
         LOG.info(() -> "Paths                    " + paths.toString() + ls +
@@ -232,7 +256,10 @@ public final class ProgramParameters {
                        "Clock Font Size          " + clockFontSize + ls +
                        "Clock Color              " + clockColor + ls +
                        "Clock Distance from Top  " + clockTopDistance + ls +
-                       "Clock Distance from Left " + clockLeftDistance + ls);
+                       "Clock Distance from Left " + clockLeftDistance + ls +
+                       "Clock Background Color   " + clockBackgroundColor + ls +
+                       "Clock Background Opacity " + clockBackgroundOpacity + ls +
+                       "Clock Opacity            " + clockOpacity + ls);
 
     }
 
@@ -396,5 +423,17 @@ public final class ProgramParameters {
 
     public double getClockLeftDistance() {
         return clockLeftDistance;
+    }
+
+    public Color getClockBackgroundColor() {
+        return clockBackgroundColor;
+    }
+
+    public double getClockBackgroundOpacity() {
+        return clockBackgroundOpacity;
+    }
+
+    public double getClockOpacity() {
+        return clockOpacity;
     }
 }

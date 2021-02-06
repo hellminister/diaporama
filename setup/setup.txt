@@ -138,6 +138,24 @@ Cyan
 ##Clock-Left
 50
 
+; This is the color of the background of the clock
+; The name of the colors follow those defined in javafx.scene.paint.Color
+; The default value is Black
+##Clock-Background-Color
+Black
+
+; This is the opacity of the clock's background
+; the value must be between 0 and 1 inclusively
+; the default value is 0.5
+##Clock-Background-Opacity
+0.6
+
+; This is the opacity of the clock
+; the value must be between 0 and 1 inclusively
+; the default value is 0.5
+##Clock-Opacity
+1
+
 ##ScreenSleep
 ;22:00
 

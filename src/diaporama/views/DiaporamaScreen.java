@@ -16,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.util.Duration;
@@ -112,22 +113,26 @@ public class DiaporamaScreen extends Scene {
     }
 
     private void createClock(ProgramParameters param, AnchorPane infoPane) {
+        StackPane background = new StackPane();
+        background.setStyle("-fx-background-color: rgba(" + param.getClockBackgroundColor().getRed() + ", " + param.getClockBackgroundColor().getGreen() + ", " + param.getClockBackgroundColor().getBlue() + ", " + param.getClockBackgroundOpacity() + ")");
+        background.setOpacity(param.getClockOpacity());
         Label time = new Label();
         time.setTextFill(param.getClockColor());
         time.setFont(new Font(param.getClockFont(), param.getClockFontSize()));
 
         Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
             LocalTime currentTime = LocalTime.now();
-            time.setText(currentTime.getHour() + ":" + currentTime.getMinute());
+            time.setText(currentTime.getHour() + ":" + String.format("%02d",currentTime.getMinute()));
         }),
                 new KeyFrame(Duration.seconds(1))
         );
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();
 
-        infoPane.getChildren().addAll(time);
-        AnchorPane.setTopAnchor(time, param.getClockTopDistance());
-        AnchorPane.setLeftAnchor(time, param.getClockLeftDistance());
+        background.getChildren().add(time);
+        infoPane.getChildren().addAll(background);
+        AnchorPane.setTopAnchor(background, param.getClockTopDistance());
+        AnchorPane.setLeftAnchor(background, param.getClockLeftDistance());
     }
 
 
