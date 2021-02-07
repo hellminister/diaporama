@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * A queue that preloads a given number of object taken from the list of file given async
  * @param <T>
  */
-public abstract class QueueFiller<T> implements Runnable{
+public abstract class QueueFiller<T extends MediaWithInfo> implements Runnable{
     private static final Logger LOG = Logger.getLogger(QueueFiller.class.getName());
 
     protected Loader<T> fileChoices;

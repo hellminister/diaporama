@@ -1,12 +1,9 @@
 package diaporama.views;
 
 import diaporama.ProgramParameters;
-import diaporama.medialoader.loaders.Loader;
 import diaporama.medialoader.loaders.LockableLoader;
-import diaporama.medialoader.loaders.VideoLoader;
+import diaporama.medialoader.loaders.MediaPlayerWithInfo;
 import javafx.animation.FadeTransition;
-import javafx.animation.SequentialTransition;
-import javafx.scene.image.ImageView;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.util.Duration;
@@ -17,7 +14,7 @@ import java.util.logging.Logger;
  * This class takes care of starting/controlling videos and the transition at the start and end of it
  * Only 1 of the instances created can play at a time
  */
-public class VideoTransitioning extends Transitioning<MediaView, LockableLoader<MediaPlayer>>{
+public class VideoTransitioning extends Transitioning<MediaView, LockableLoader<MediaPlayerWithInfo>>{
     private static final Logger LOG = Logger.getLogger(VideoTransitioning.class.getName());
 
     private final FadeTransition mft;
@@ -29,7 +26,7 @@ public class VideoTransitioning extends Transitioning<MediaView, LockableLoader<
      * @param ds the screen to which this node is attached
      * @param parameters The parameters of the program
      */
-    VideoTransitioning(LockableLoader<MediaPlayer> videoLoader, DiaporamaScreen ds, ProgramParameters parameters) {
+    VideoTransitioning(LockableLoader<MediaPlayerWithInfo> videoLoader, DiaporamaScreen ds, ProgramParameters parameters) {
         super(videoLoader, new MediaView(), ds);
         bufferingTime = Duration.seconds(parameters.getVideoBufferingTime());
 
@@ -72,8 +69,14 @@ public class VideoTransitioning extends Transitioning<MediaView, LockableLoader<
 
     @Override
     protected void changeMediaToShow() throws InterruptedException, IllegalAccessException {
-        MediaPlayer mp = producer.getNext(currentPlaying);
+        MediaPlayerWithInfo mpI = producer.getNext(currentPlaying);
+        var mp = mpI.getMediaPlayer();
         shower.setMediaPlayer(mp);
+
+        var fileBadge = currentPlaying.getFileInfoBadge();
+        fileBadge.setCreationDate(mpI.getCreationDate());
+        fileBadge.setFilename(mpI.getFilename());
+
 
         LOG.fine(() -> "preparing video to play " + mp.getStatus());
 

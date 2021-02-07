@@ -5,7 +5,7 @@ import javafx.scene.media.MediaPlayer;
 
 import java.util.logging.Logger;
 
-public class LockableLoader<T> extends Loader<T> {
+public class LockableLoader<T extends MediaWithInfo> extends Loader<T> {
     private static final Logger LOG = Logger.getLogger(LockableLoader.class.getName());
 
     protected final Object lock;      // a lock to synchronize access

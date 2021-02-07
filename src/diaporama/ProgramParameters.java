@@ -45,6 +45,20 @@ public final class ProgramParameters {
     private final Color clockBackgroundColor;
     private final double clockBackgroundOpacity;
     private final double clockOpacity;
+    private final boolean showCreationDate;
+    private final boolean showFileName;
+    private final double infoBadgeBottomDistance;
+    private final double infoBadgeRightDistance;
+    private final String fileCreationDatePattern;
+    private final Color fileInfoBadgeBackgroundColor;
+    private final double fileInfoBadgeBackgroundOpacity;
+    private final double fileInfoBadgeOpacity;
+    private final Color fileInfoBadgeCreationTimeColor;
+    private final String fileInfoBadgeCreationTimeFont;
+    private final double fileInfoBadgeCreationTimeFontSize;
+    private final Color fileInfoBadgeFileNameColor;
+    private final String fileInfoBadgeFileNameFont;
+    private final double fileInfoBadgeFileNameFontSize;
 
     /**
      * Reads the files and sets the values of the program parameters
@@ -53,6 +67,9 @@ public final class ProgramParameters {
     public ProgramParameters(String setupPath) {
         LOG.info( ()-> setupPath);
 
+        // this section is used to extracts the parameters value from the settings file
+        // usually only the last read value is used
+        // and to set the default values of the parameters
         var dirDefault = new HashSet<String>();
         var extDefault = new HashMap<String, String>();
         var imFadeTimeDefault = 500d;
@@ -80,6 +97,20 @@ public final class ProgramParameters {
         var clockBackgroundColorTemp = Color.BLACK;
         var clockBackgroundOpacityTemp = 0.5d;
         var clockOpacityTemp = 1d;
+        var showFileNameTemp = false;
+        var showCreationDateTemp = false;
+        var infoBadgeBottomDistanceTemp = 50d;
+        var infoBadgeRightDistanceTemp = 50d;
+        var fileCreationDatePatternTemp = "dd/MM/yyyy";
+        var fileInfoBadgeBackgroundColorTemp = Color.BLACK;
+        var fileInfoBadgeBackgroundOpacityTemp = 0.5d;
+        var fileInfoBadgeOpacityTemp = 1d;
+        var fileInfoBadgeCreationTimeColorTemp = Color.CYAN;
+        var fileInfoBadgeCreationTimeFontTemp = "Arial";
+        var fileInfoBadgeCreationTimeFontSizeTemp = 36d;
+        var fileInfoBadgeFileNameColorTemp = Color.CYAN;
+        var fileInfoBadgeFileNameFontTemp = "Arial";
+        var fileInfoBadgeFileNameFontSizeTemp = 18d;
 
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(setupPath)))){
             String line = reader.readLine();
@@ -88,10 +119,8 @@ public final class ProgramParameters {
             while (line != null){
                 if (line.startsWith("##")){
                     treatingSection = line.substring(2);
-                } else //noinspection StatementWithEmptyBody
-                    if (line.startsWith(";")) {
-                    // ignore this line, it is comments
-                } else if (!line.isBlank()){
+                } else if (!line.isBlank() && !line.startsWith(";")){
+                    // skips blank lines and line starting with ; (comment lines)
                     switch (treatingSection){
                         case "Paths" :
                             dirDefault.add(line);
@@ -189,6 +218,66 @@ public final class ProgramParameters {
                         case "Clock-Opacity":
                             clockOpacityTemp = Double.parseDouble(line);
                             break;
+                        case "Show-FileName":
+                            showFileNameTemp = "true".equals(line);
+                            break;
+                        case "Show-CreationTime":
+                            showCreationDateTemp = "true".equals(line);
+                            break;
+                        case "FileInfoBadge-Bottom":
+                            infoBadgeBottomDistanceTemp = Double.parseDouble(line);
+                            break;
+                        case "FileInfoBadge-Right":
+                            infoBadgeRightDistanceTemp = Double.parseDouble(line);
+                            break;
+                        case "FileInfoBadge-Background-Color":
+                            try {
+                                fileInfoBadgeBackgroundColorTemp = Color.valueOf(line.toUpperCase());
+                            } catch (Exception e) {
+                                fileInfoBadgeBackgroundColorTemp = Color.BLACK;
+                                String finalLine1 = line;
+                                LOG.warning(() -> "Couldn't read color : " + finalLine1 + " defaulting to BLACK");
+                            }
+                            break;
+                        case "FileInfoBadge-Background-Opacity":
+                            fileInfoBadgeBackgroundOpacityTemp = Double.parseDouble(line);
+                            break;
+                        case "FileInfoBadge-Opacity":
+                            fileInfoBadgeOpacityTemp = Double.parseDouble(line);
+                            break;
+                        case "FileInfo-CreationDate-Pattern":
+                            fileCreationDatePatternTemp = line;
+                            break;
+                        case "FileInfo-CreationDate-Font":
+                            fileInfoBadgeCreationTimeFontTemp = line;
+                            break;
+                        case "FileInfo-CreationDate-Font-Size":
+                            fileInfoBadgeCreationTimeFontSizeTemp = Double.parseDouble(line);
+                            break;
+                        case "FileInfo-CreationDate-Color":
+                            try {
+                                fileInfoBadgeCreationTimeColorTemp = Color.valueOf(line.toUpperCase());
+                            } catch (Exception e) {
+                                fileInfoBadgeCreationTimeColorTemp = Color.CYAN;
+                                String finalLine1 = line;
+                                LOG.warning(() -> "Couldn't read color : " + finalLine1 + " defaulting to CYAN");
+                            }
+                            break;
+                        case "FileInfo-FileName-Font":
+                            fileInfoBadgeFileNameFontTemp = line;
+                            break;
+                        case "FileInfo-FileName-Font-Size":
+                            fileInfoBadgeFileNameFontSizeTemp = Double.parseDouble(line);
+                            break;
+                        case "FileInfo-FileName-Color":
+                            try {
+                                fileInfoBadgeFileNameColorTemp = Color.valueOf(line.toUpperCase());
+                            } catch (Exception e) {
+                                fileInfoBadgeFileNameColorTemp = Color.CYAN;
+                                String finalLine1 = line;
+                                LOG.warning(() -> "Couldn't read color : " + finalLine1 + " defaulting to CYAN");
+                            }
+                            break;
                         default:
                             String finalTreatingSection = treatingSection;
                             String finalLine = line;
@@ -204,6 +293,7 @@ public final class ProgramParameters {
             LOG.severe(e::toString);
         }
 
+        // This section sets the parameters in the correct field
         paths = Collections.unmodifiableSet(dirDefault);
         extensions = Collections.unmodifiableMap(extDefault);
         imageFadeTime = imFadeTimeDefault;
@@ -231,35 +321,63 @@ public final class ProgramParameters {
         clockBackgroundColor = clockBackgroundColorTemp;
         clockBackgroundOpacity = clockBackgroundOpacityTemp;
         clockOpacity = clockOpacityTemp;
+        showCreationDate = showCreationDateTemp;
+        showFileName = showFileNameTemp;
+        infoBadgeBottomDistance = infoBadgeBottomDistanceTemp;
+        infoBadgeRightDistance = infoBadgeRightDistanceTemp;
+        fileCreationDatePattern = fileCreationDatePatternTemp;
+        fileInfoBadgeBackgroundColor = fileInfoBadgeBackgroundColorTemp;
+        fileInfoBadgeBackgroundOpacity = fileInfoBadgeBackgroundOpacityTemp;
+        fileInfoBadgeOpacity = fileInfoBadgeOpacityTemp;
+        fileInfoBadgeCreationTimeColor = fileInfoBadgeCreationTimeColorTemp;
+        fileInfoBadgeCreationTimeFont = fileInfoBadgeCreationTimeFontTemp;
+        fileInfoBadgeCreationTimeFontSize = fileInfoBadgeCreationTimeFontSizeTemp;
+        fileInfoBadgeFileNameColor = fileInfoBadgeFileNameColorTemp;
+        fileInfoBadgeFileNameFont = fileInfoBadgeFileNameFontTemp;
+        fileInfoBadgeFileNameFontSize = fileInfoBadgeFileNameFontSizeTemp;
 
 
-        LOG.info(() -> "Paths                    " + paths.toString() + ls +
-                       "Extensions               " + extensions.toString() + ls +
-                       "Image Fade Time          " + imageFadeTime + ls +
-                       "Image Show Time          " + imageScaleTime + ls +
-                       "Image Show_Hor Time      " + imageScaleHorTime + ls +
-                       "Image Show_Vert Time     " + imageScaleVertTime + ls +
-                       "Image Show Time          " + imageShowTime + ls +
-                       "Video Fade Time          " + videoFadeTime + ls +
-                       "Random Image?            " + imageRandom + ls +
-                       "Random Video?            " + videoRandom + ls +
-                       "Image Queue Size         " + imageQueueSize + ls +
-                       "Video Queue Size         " + videoQueueSize + ls +
-                       "Video Starting Chance    " + videoStartChance + ls +
-                       "Video Buffering Time     " + videoBufferingTime + ls +
-                       "Filepath Update Time     " + filePathUpdateTime + ls +
-                       "Image Transition Type    " + imageTransitionType + ls +
-                       "Sleeping Times           " + sleepTime + ls +
-                       "Waking Times             " + wakeTime + ls +
-                       "Show Clock               " + showClock + ls +
-                       "Clock Font               " + clockFont + ls +
-                       "Clock Font Size          " + clockFontSize + ls +
-                       "Clock Color              " + clockColor + ls +
-                       "Clock Distance from Top  " + clockTopDistance + ls +
-                       "Clock Distance from Left " + clockLeftDistance + ls +
-                       "Clock Background Color   " + clockBackgroundColor + ls +
-                       "Clock Background Opacity " + clockBackgroundOpacity + ls +
-                       "Clock Opacity            " + clockOpacity + ls);
+        LOG.info(() -> "Paths                                " + paths.toString() + ls +
+                       "Extensions                           " + extensions.toString() + ls +
+                       "Image Fade Time                      " + imageFadeTime + ls +
+                       "Image Show Time                      " + imageScaleTime + ls +
+                       "Image Show_Hor Time                  " + imageScaleHorTime + ls +
+                       "Image Show_Vert Time                 " + imageScaleVertTime + ls +
+                       "Image Show Time                      " + imageShowTime + ls +
+                       "Video Fade Time                      " + videoFadeTime + ls +
+                       "Random Image?                        " + imageRandom + ls +
+                       "Random Video?                        " + videoRandom + ls +
+                       "Image Queue Size                     " + imageQueueSize + ls +
+                       "Video Queue Size                     " + videoQueueSize + ls +
+                       "Video Starting Chance                " + videoStartChance + ls +
+                       "Video Buffering Time                 " + videoBufferingTime + ls +
+                       "Filepath Update Time                 " + filePathUpdateTime + ls +
+                       "Image Transition Type                " + imageTransitionType + ls +
+                       "Sleeping Times                       " + sleepTime + ls +
+                       "Waking Times                         " + wakeTime + ls +
+                       "Show Clock                           " + showClock + ls +
+                       "Clock Font                           " + clockFont + ls +
+                       "Clock Font Size                      " + clockFontSize + ls +
+                       "Clock Color                          " + clockColor + ls +
+                       "Clock Distance from Top              " + clockTopDistance + ls +
+                       "Clock Distance from Left             " + clockLeftDistance + ls +
+                       "Clock Background Color               " + clockBackgroundColor + ls +
+                       "Clock Background Opacity             " + clockBackgroundOpacity + ls +
+                       "Clock Opacity                        " + clockOpacity + ls +
+                       "Show File Name                       " + showFileName + ls +
+                       "Show File Creation Time              " + showCreationDate + ls +
+                       "File Info Badge Distance From Bottom " + infoBadgeBottomDistance + ls +
+                       "File Info Badge Distance From Right  " + infoBadgeRightDistance + ls +
+                       "File Info Badge Background Color     " + fileInfoBadgeBackgroundColor + ls +
+                       "File Info Badge Background Opacity   " + fileInfoBadgeBackgroundOpacity + ls +
+                       "File Info Badge Opacity              " + fileInfoBadgeOpacity + ls +
+                       "File Creation Time Pattern           " + fileCreationDatePattern + ls +
+                       "File Creation Time Font              " + fileInfoBadgeCreationTimeFont + ls +
+                       "File Creation Time Font Size         " + fileInfoBadgeCreationTimeFontSize + ls +
+                       "File Creation Time Color             " + fileInfoBadgeCreationTimeColor + ls +
+                       "File Name Font                       " + fileInfoBadgeFileNameFont + ls +
+                       "File Name Font Size                  " + fileInfoBadgeFileNameFontSize + ls +
+                       "File Name Color                      " + fileInfoBadgeFileNameColor + ls);
 
     }
 
@@ -435,5 +553,61 @@ public final class ProgramParameters {
 
     public double getClockOpacity() {
         return clockOpacity;
+    }
+
+    public boolean getShowFileName() {
+        return showFileName;
+    }
+
+    public boolean getShowCreationDate() {
+        return showCreationDate;
+    }
+
+    public double getInfoBadgeBottomDistance() {
+        return infoBadgeBottomDistance;
+    }
+
+    public double getInfoBadgeRightDistance() {
+        return infoBadgeRightDistance;
+    }
+
+    public String getFileCreationDatePattern() {
+        return fileCreationDatePattern;
+    }
+
+    public Color getFileInfoBadgeBackgroundColor() {
+        return fileInfoBadgeBackgroundColor;
+    }
+
+    public double getFileInfoBadgeBackgroundOpacity() {
+        return fileInfoBadgeBackgroundOpacity;
+    }
+
+    public double getFileInfoBadgeOpacity() {
+        return fileInfoBadgeOpacity;
+    }
+
+    public Color getFileInfoBadgeCreationTimeColor() {
+        return fileInfoBadgeCreationTimeColor;
+    }
+
+    public String getFileInfoBadgeCreationTimeFont() {
+        return fileInfoBadgeCreationTimeFont;
+    }
+
+    public double getFileInfoBadgeCreationTimeFontSize() {
+        return fileInfoBadgeCreationTimeFontSize;
+    }
+
+    public Color getFileInfoBadgeFileNameColor() {
+        return fileInfoBadgeFileNameColor;
+    }
+
+    public String getFileInfoBadgeFileNameFont() {
+        return fileInfoBadgeFileNameFont;
+    }
+
+    public double getFileInfoBadgeFileNameFontSize() {
+        return fileInfoBadgeFileNameFontSize;
     }
 }

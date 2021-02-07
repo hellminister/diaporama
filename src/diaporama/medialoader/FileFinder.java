@@ -3,16 +3,12 @@ package diaporama.medialoader;
 import diaporama.ProgramParameters;
 import diaporama.medialoader.loaders.ImageWithInfo;
 import diaporama.medialoader.loaders.Loader;
-import javafx.scene.image.Image;
-import javafx.scene.media.MediaPlayer;
+import diaporama.medialoader.loaders.MediaPlayerWithInfo;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
@@ -26,7 +22,7 @@ public class FileFinder implements Runnable {
     private final Path directory;
     private final Map<String,String> extensions;
     private final Loader<ImageWithInfo> imageBag;
-    private final Loader<MediaPlayer> videoBag;
+    private final Loader<MediaPlayerWithInfo> videoBag;
     private int ranXTime;
 
     /**
@@ -37,13 +33,12 @@ public class FileFinder implements Runnable {
      * @param params the program parameters
      */
     public FileFinder(Path directory, Loader<ImageWithInfo> imageBag,
-                      Loader<MediaPlayer> videoBag, ProgramParameters params) {
+                      Loader<MediaPlayerWithInfo> videoBag, ProgramParameters params) {
         this.directory = directory;
         this.extensions = params.getExtensions();
         this.imageBag = imageBag;
         this.videoBag = videoBag;
         ranXTime = 0;
-Optional<String> op;
     }
 
     /**

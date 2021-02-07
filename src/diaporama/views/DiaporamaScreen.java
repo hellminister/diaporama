@@ -16,7 +16,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.util.Duration;
@@ -45,6 +44,7 @@ public class DiaporamaScreen extends Scene {
 
     private Transitioning<?, ?> current;
     private ScreenSleeper screenSleeper;
+    private final FileInfoBadge fileInfoBadge;
 
     /**
      * creates the slide show scene
@@ -58,6 +58,9 @@ public class DiaporamaScreen extends Scene {
         mediaLoader = media;
 
         videoStartChance = param.getVideoStartChance();
+
+        fileInfoBadge = new FileInfoBadge(param);
+        var infoPane = createInfoPane(param);
 
         rdm = new Random();
 
@@ -86,8 +89,6 @@ public class DiaporamaScreen extends Scene {
         root.getChildren().add(createCenteringPanesFor(imageNode));
         root.getChildren().add(createCenteringPanesFor(videoNode));
 
-        var infoPane = createInfoPane(param);
-
         root.getChildren().add(infoPane);
         infoPane.toFront();
 
@@ -109,7 +110,22 @@ public class DiaporamaScreen extends Scene {
             createClock(param, infoPane);
         }
 
+        if (param.getShowFileName() || param.getShowCreationDate()){
+            attachInfoFileSection(param, infoPane);
+        }
+
         return infoPane;
+    }
+
+    private void attachInfoFileSection(ProgramParameters param, AnchorPane infoPane) {
+        infoPane.getChildren().add(fileInfoBadge);
+
+        AnchorPane.setBottomAnchor(fileInfoBadge, param.getInfoBadgeBottomDistance());
+        AnchorPane.setRightAnchor(fileInfoBadge, param.getInfoBadgeRightDistance());
+    }
+
+    public FileInfoBadge getFileInfoBadge(){
+        return fileInfoBadge;
     }
 
     private void createClock(ProgramParameters param, AnchorPane infoPane) {

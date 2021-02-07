@@ -1,13 +1,11 @@
 package diaporama.views;
 
 import diaporama.ProgramParameters;
-import diaporama.medialoader.loaders.ImageLoader;
 import diaporama.medialoader.loaders.ImageWithInfo;
 import diaporama.medialoader.loaders.Loader;
 import diaporama.views.transitions.Type;
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
@@ -71,6 +69,10 @@ public class RandomImageTransitioning extends Transitioning<ImageView, Loader<Im
     protected void changeMediaToShow() throws InterruptedException {
         ImageWithInfo img = producer.getNext();
         shower.setImage(img.getImage());
+
+        var fileBadge = currentPlaying.getFileInfoBadge();
+        fileBadge.setCreationDate(img.getCreationDate());
+        fileBadge.setFilename(img.getFilename());
 
         adjustView(shower, img.getOrientation());
 

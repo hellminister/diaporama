@@ -73,8 +73,8 @@ public enum Type {
     private static final Random rdm = new Random();
     private static final Type[] values = Type.values();
 
-    private TransitionInstantiation startAnimation;
-    private TransitionInstantiation endAnimation;
+    private final TransitionInstantiation startAnimation;
+    private final TransitionInstantiation endAnimation;
 
     Type(TransitionInstantiation startAnimation, TransitionInstantiation endAnimation) {
         this.startAnimation = startAnimation;

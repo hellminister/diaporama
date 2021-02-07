@@ -1,6 +1,7 @@
 package diaporama.views;
 
 import diaporama.medialoader.loaders.Loader;
+import diaporama.medialoader.loaders.MediaWithInfo;
 import javafx.animation.SequentialTransition;
 import javafx.scene.Node;
 
@@ -11,7 +12,7 @@ import java.util.logging.Logger;
  * @param <T> the Node type that shows the Media
  * @param <R> The Loader type that produces the Media to show
  */
-public abstract class Transitioning<T extends Node, R extends Loader<?>> {
+public abstract class Transitioning<T extends Node, R extends Loader<? extends MediaWithInfo>> {
     private static final Logger LOG = Logger.getLogger(Transitioning.class.getName());
 
     protected final SequentialTransition transition;

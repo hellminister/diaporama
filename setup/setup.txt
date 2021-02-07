@@ -112,12 +112,12 @@ P1D
 ##Show-Clock
 true
 
-; This is the font to use to show time
+; This is the font to use to show clock
 ; default value = Arial
 ##Clock-Font
 Arial
 
-; This is the size of font to use to show time
+; This is the size of font to use to show clock
 ; default value = 72
 ##Clock-Font-Size
 72
@@ -152,9 +152,89 @@ Black
 
 ; This is the opacity of the clock
 ; the value must be between 0 and 1 inclusively
-; the default value is 0.5
+; the default value is 1
 ##Clock-Opacity
 1
+
+; If we want to see the file name of the media shown on the screen
+; default value = false
+##Show-FileName
+true
+
+; If we want to see the creation time of the file of the media shown on the screen
+; this might differ depending on OS
+; default value = false
+##Show-CreationTime
+true
+
+; This is the distance of the FileInfoBadge from the bottom of the screen
+; used only if either Show-CreationTime and Show-FileName is true
+; default value = 50 pixel
+##FileInfoBadge-Bottom
+50
+
+; This is the distance of the FileInfoBadge from the right of the screen
+; used only if either Show-CreationTime and Show-FileName is true
+; default value = 50 pixel
+##FileInfoBadge-Right
+50
+
+; This is the color of the background of the FileInfoBadge
+; The name of the colors follow those defined in javafx.scene.paint.Color
+; The default value is Black
+##FileInfoBadge-Background-Color
+Transparent
+
+; This is the opacity of the FileInfoBadge's background
+; the value must be between 0 and 1 inclusively
+; the default value is 0.5
+##FileInfoBadge-Background-Opacity
+0.0
+
+; This is the opacity of the FileInfoBadge
+; the value must be between 0 and 1 inclusively
+; the default value is 1
+##FileInfoBadge-Opacity
+1
+
+; This is the pattern that will be used to show the time of the media creation date
+; uses the description string as describe by java.time.format.DateTimeFormatter
+; used only if Show-CreationTime is true
+; default value = dd/MM/yyyy
+##FileInfo-CreationDate-Pattern
+dd/MM/yyyy
+
+; This is the font to use to show the media creation date
+; default value = Arial
+##FileInfo-CreationDate-Font
+Arial
+
+; This is the size of font to use to show the media creation date
+; default value = 36
+##FileInfo-CreationDate-Font-Size
+36
+
+; This is to set the color of the media file name
+; The name of the colors follow those defined in javafx.scene.paint.Color
+; the default value is Cyan
+##FileInfo-CreationDate-Color
+Cyan
+
+; This is the font to use to show the media file name
+; default value = Arial
+##FileInfo-FileName-Font
+Arial
+
+; This is the size of font to use to show the media file name
+; default value = 18
+##FileInfo-FileName-Font-Size
+18
+
+; This is to set the color of the media creation date
+; The name of the colors follow those defined in javafx.scene.paint.Color
+; the default value is Cyan
+##FileInfo-FileName-Color
+Cyan
 
 ##ScreenSleep
 ;22:00

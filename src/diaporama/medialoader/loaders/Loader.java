@@ -7,7 +7,7 @@ import java.util.logging.Logger;
  * Loads and manages objects of type T
  * @param <T>
  */
-public class Loader<T> {
+public class Loader<T extends MediaWithInfo> {
     private static final Logger LOG = Logger.getLogger(Loader.class.getName());
 
 

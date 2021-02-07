@@ -2,11 +2,15 @@ package diaporama.medialoader.loaders;
 
 import javafx.scene.image.Image;
 
-public class ImageWithInfo {
+import java.time.LocalDateTime;
 
-    private int orientation;
-    private Image image;
-    public ImageWithInfo(Image img, int orientation) {
+public class ImageWithInfo extends MediaWithInfo {
+
+    private final int orientation;
+    private final Image image;
+
+    public ImageWithInfo(Image img, int orientation, LocalDateTime creationDate, String filename) {
+        super(creationDate, filename);
         image = img;
         this.orientation = orientation;
     }
@@ -18,4 +22,6 @@ public class ImageWithInfo {
     public int getOrientation() {
         return orientation;
     }
+
+
 }
