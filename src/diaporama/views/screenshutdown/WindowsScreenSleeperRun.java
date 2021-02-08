@@ -10,6 +10,11 @@ package diaporama.views.screenshutdown;
 import java.lang.annotation.Native;
 import java.util.logging.Logger;
 
+/**
+ * This class controls the sleep mode of the screen for the Windows OS
+ * This uses jna and the jna library
+ * Will need to reactive
+ */
 public class WindowsScreenSleeperRun implements ScreenSleeperRun {
     private static final Logger LOG = Logger.getLogger(WindowsScreenSleeperRun.class.getName());
 //    public interface User32 extends StdCallLibrary {

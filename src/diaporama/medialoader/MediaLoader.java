@@ -20,7 +20,7 @@ public class MediaLoader {
     private final ScheduledExecutorService findersExecutor;
 
     public MediaLoader( ProgramParameters param ) {
-        imageLoader = new ImageLoaderAWT(param);
+        imageLoader = new ImageLoader(param);
         videoLoader = new VideoLoader(param);
 
         findersExecutor = Executors.newScheduledThreadPool(param.getPaths().size());

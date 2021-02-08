@@ -33,11 +33,13 @@ public class VideoLoader extends LockableLoader<MediaPlayerWithInfo> {
                     var filename = fileName.toString();
 
                     LocalDateTime creationDate = null;
-                    try {
-                        BasicFileAttributes attr = Files.readAttributes(fileName, BasicFileAttributes.class);
-                        creationDate = attr.creationTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (param.getShowCreationDate()) {
+                        try {
+                            BasicFileAttributes attr = Files.readAttributes(fileName, BasicFileAttributes.class);
+                            creationDate = attr.creationTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                     return new MediaPlayerWithInfo(creationDate, filename, media);
                 } catch (MalformedURLException e) {

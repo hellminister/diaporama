@@ -5,13 +5,14 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-
+/**
+ * To show the file name and the creation date of the file
+ */
 public class FileInfoBadge extends VBox {
     private final Label creationDate;
     private final Label filename;
@@ -58,12 +59,18 @@ public class FileInfoBadge extends VBox {
 
     }
 
+    /**
+     * @param name the file name to show
+     */
     public void setFilename(String name){
         if (filename != null){
             filename.setText(name);
         }
     }
 
+    /**
+     * @param time the time to show
+     */
     public void setCreationDate(LocalDateTime time){
         if (creationDate != null){
             creationDate.setText(time.format(datePattern));

@@ -5,6 +5,10 @@ import javafx.scene.media.MediaPlayer;
 
 import java.util.logging.Logger;
 
+/**
+ * A media loader that lets only 1 Diaporama screen show its medias at a time
+ * @param <T> The type of media that is produced by this loader
+ */
 public class LockableLoader<T extends MediaWithInfo> extends Loader<T> {
     private static final Logger LOG = Logger.getLogger(LockableLoader.class.getName());
 

@@ -2,6 +2,9 @@ package diaporama.views.screenshutdown;
 
 import java.util.logging.Logger;
 
+/**
+ * Creates a ScreenSleeperRun object based on the OS this program is running on
+ */
 public class ScreenSleeperFactory {
     private static final Logger LOG = Logger.getLogger(ScreenSleeperFactory.class.getName());
 

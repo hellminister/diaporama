@@ -4,6 +4,9 @@ import javafx.scene.image.Image;
 
 import java.time.LocalDateTime;
 
+/**
+ * The image object with its file info
+ */
 public class ImageWithInfo extends MediaWithInfo {
 
     private final int orientation;
@@ -15,10 +18,16 @@ public class ImageWithInfo extends MediaWithInfo {
         this.orientation = orientation;
     }
 
+    /**
+     * @return the contained Image
+     */
     public Image getImage(){
         return image;
     }
 
+    /**
+     * @return The image orientation
+     */
     public int getOrientation() {
         return orientation;
     }

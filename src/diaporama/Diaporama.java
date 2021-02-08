@@ -2,8 +2,7 @@ package diaporama;
 
 import diaporama.medialoader.MediaLoader;
 import diaporama.views.DiaporamaScreen;
-import diaporama.views.ScreenSleeper;
-import diaporama.views.WindowsScreenSleeperRun;
+import diaporama.views.screenshutdown.ScreenSleeper;
 import javafx.application.Application;
 import javafx.stage.Screen;
 import javafx.stage.Stage;

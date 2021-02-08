@@ -2,6 +2,7 @@ package diaporama.views;
 
 import diaporama.ProgramParameters;
 import diaporama.medialoader.MediaLoader;
+import diaporama.views.screenshutdown.ScreenSleeper;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -105,6 +106,12 @@ public class DiaporamaScreen extends Scene {
 
     }
 
+    /**
+     * creates the pane that will contain the clock and the file info badge
+     * and fills it
+     * @param param the program parameters
+     * @return the info pane
+     */
     private AnchorPane createInfoPane(ProgramParameters param) {
         var infoPane = new AnchorPane();
         infoPane.setStyle("-fx-background-color: transparent");
@@ -120,6 +127,11 @@ public class DiaporamaScreen extends Scene {
         return infoPane;
     }
 
+    /**
+     * Attach the file info badge to the infoPane
+     * @param param    the program parameters
+     * @param infoPane the container pane
+     */
     private void attachInfoFileSection(ProgramParameters param, AnchorPane infoPane) {
         infoPane.getChildren().add(fileInfoBadge);
 
@@ -127,10 +139,18 @@ public class DiaporamaScreen extends Scene {
         AnchorPane.setRightAnchor(fileInfoBadge, param.getInfoBadgeRightDistance());
     }
 
+    /**
+     * @return the File info badge
+     */
     public FileInfoBadge getFileInfoBadge(){
         return fileInfoBadge;
     }
 
+    /**
+     * Creates the clock and adds it to the infoPane
+     * @param param    the program parameters
+     * @param infoPane the container pane
+     */
     private void createClock(ProgramParameters param, AnchorPane infoPane) {
         StackPane background = new StackPane();
         background.setStyle("-fx-background-color: rgba(" + param.getClockBackgroundColor().getRed() + ", " + param.getClockBackgroundColor().getGreen() + ", " + param.getClockBackgroundColor().getBlue() + ", " + param.getClockBackgroundOpacity() + ")");
@@ -217,6 +237,10 @@ public class DiaporamaScreen extends Scene {
         current.unpause();
     }
 
+    /**
+     * Sets the screen sleeper to use
+     * @param ss the screen sleeper to use
+     */
     public void registerSleeper(ScreenSleeper ss) {
         screenSleeper = ss;
     }

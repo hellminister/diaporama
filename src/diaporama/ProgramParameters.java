@@ -511,102 +511,204 @@ public final class ProgramParameters {
      */
     public String getImageTransitionType() { return imageTransitionType;}
 
+    /**
+     * ##ScreenSleep
+     * not used yet
+     * @return A list of string saying when the screens should go to sleep
+     */
     public List<String> getSleepTime() {
         return sleepTime;
     }
 
+    /**
+     * ##ScreenWake
+     * not used yet
+     * @return A list of string saying when the screens should wake
+     */
     public List<String> getWakeTime() {
         return wakeTime;
     }
 
+    /**
+     * ##Clock-Font
+     * @return The font to use for the clock
+     */
     public String getClockFont() {
         return clockFont;
     }
 
+    /**
+     * ##Clock-Font-Size
+     * @return The size of the font to use for the clock
+     */
     public double getClockFontSize() {
         return clockFontSize;
     }
 
+    /**
+     * ##Clock-Color
+     * @return The color of the text to use for the clock
+     */
     public Color getClockColor() {
         return clockColor;
     }
 
+    /**
+     * ##Show-Clock
+     * @return Whether we want to see the clock on the screen
+     */
     public boolean getShowClock() {
         return showClock;
     }
 
+    /**
+     * ##Clock-Top
+     * @return the distance of the clock from the screen top in pixel
+     */
     public double getClockTopDistance() {
         return clockTopDistance;
     }
 
+    /**
+     * ##Clock-Left
+     * @return the distance of the clock from the screen left in pixel
+     */
     public double getClockLeftDistance() {
         return clockLeftDistance;
     }
 
+    /**
+     * ##Clock-Background-Color
+     * @return the color of the background of the clock
+     */
     public Color getClockBackgroundColor() {
         return clockBackgroundColor;
     }
 
+    /**
+     * ##Clock-Background-Opacity
+     * @return the opacity of the background of the clock
+     */
     public double getClockBackgroundOpacity() {
         return clockBackgroundOpacity;
     }
 
+    /**
+     * ##Clock-Opacity
+     * @return the opacity of the clock
+     */
     public double getClockOpacity() {
         return clockOpacity;
     }
 
+    /**
+     * ##Show-FileName
+     * @return Whether we want to see the file name of the shown media on the screen
+     */
     public boolean getShowFileName() {
         return showFileName;
     }
 
+    /**
+     * ##Show-CreationTime
+     * @return Whether we want to see the creation date for the file of the shown media on the screen
+     */
     public boolean getShowCreationDate() {
         return showCreationDate;
     }
 
+    /**
+     * ##FileInfoBadge-Bottom
+     * @return the distance of the file info badge from the screen bottom in pixel
+     */
     public double getInfoBadgeBottomDistance() {
         return infoBadgeBottomDistance;
     }
 
+    /**
+     * ##FileInfoBadge-Right
+     * @return the distance of the file info badge from the screen right in pixel
+     */
     public double getInfoBadgeRightDistance() {
         return infoBadgeRightDistance;
     }
 
+    /**
+     * ##FileInfo-CreationDate-Pattern
+     * @return the pattern to use to show the creation date for the file of the shown media
+     */
     public String getFileCreationDatePattern() {
         return fileCreationDatePattern;
     }
 
+    /**
+     * ##FileInfoBadge-Background-Color
+     * @return the color of the background of the file info badge
+     */
     public Color getFileInfoBadgeBackgroundColor() {
         return fileInfoBadgeBackgroundColor;
     }
 
+    /**
+     * ##FileInfoBadge-Background-Opacity
+     * @return the opacity of the background of the file info badge
+     */
     public double getFileInfoBadgeBackgroundOpacity() {
         return fileInfoBadgeBackgroundOpacity;
     }
 
+    /**
+     * ##FileInfoBadge-Opacity
+     * @return the opacity of the file info badge
+     */
     public double getFileInfoBadgeOpacity() {
         return fileInfoBadgeOpacity;
     }
 
+    /**
+     * ##FileInfo-CreationDate-Color
+     * @return The color of the text to use for the creation date for the file of the shown media
+     */
     public Color getFileInfoBadgeCreationTimeColor() {
         return fileInfoBadgeCreationTimeColor;
     }
 
+    /**
+     * ##FileInfo-CreationDate-Font
+     * @return The font of the text to use for the creation date for the file of the shown media
+     */
     public String getFileInfoBadgeCreationTimeFont() {
         return fileInfoBadgeCreationTimeFont;
     }
 
+    /**
+     * ##FileInfo-CreationDate-Font-Size
+     * @return The size of the font of the text to use for the creation date for the file of the shown media
+     */
     public double getFileInfoBadgeCreationTimeFontSize() {
         return fileInfoBadgeCreationTimeFontSize;
     }
 
+    /**
+     * ##FileInfo-FileName-Color
+     * @return The color of the text to use for the file name of the shown media
+     */
     public Color getFileInfoBadgeFileNameColor() {
         return fileInfoBadgeFileNameColor;
     }
 
+    /**
+     * ##FileInfo-FileName-Font
+     * @return The font of the text to use for the file name of the shown media
+     */
     public String getFileInfoBadgeFileNameFont() {
         return fileInfoBadgeFileNameFont;
     }
 
+    /**
+     * ##FileInfo-FileName-Font-Size
+     * @return The size of the font of the text to use for the file name of the shown media
+     */
     public double getFileInfoBadgeFileNameFontSize() {
         return fileInfoBadgeFileNameFontSize;
     }

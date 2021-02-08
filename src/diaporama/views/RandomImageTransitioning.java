@@ -99,6 +99,11 @@ public class RandomImageTransitioning extends Transitioning<ImageView, Loader<Im
         transition.getChildren().addAll(start, showTransition, end);
     }
 
+    /**
+     * Turns the image view so that the image is shown upright depending on the orientation flag
+     * @param shower       The image view containing the image to turn
+     * @param orientation  The orientation of the image
+     */
     private void adjustView(ImageView shower, int orientation) {
         switch (orientation){
             case 1:

@@ -4,6 +4,9 @@ import javafx.scene.media.MediaPlayer;
 
 import java.time.LocalDateTime;
 
+/**
+ * The mediaPlayer object with its file info
+ */
 public class MediaPlayerWithInfo extends MediaWithInfo{
     private final MediaPlayer mediaPlayer;
 
@@ -12,6 +15,9 @@ public class MediaPlayerWithInfo extends MediaWithInfo{
         this.mediaPlayer = mediaPlayer;
     }
 
+    /**
+     * @return the MediaPlayer object
+     */
     public MediaPlayer getMediaPlayer() {
         return mediaPlayer;
     }

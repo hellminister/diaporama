@@ -14,17 +14,16 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Manages the Images
  */
-public class ImageLoaderAWT extends Loader<ImageWithInfo> {
-    private static final Logger LOG = Logger.getLogger(ImageLoaderAWT.class.getName());
+public class ImageLoader extends Loader<ImageWithInfo> {
+    private static final Logger LOG = Logger.getLogger(ImageLoader.class.getName());
 
-    public ImageLoaderAWT(ProgramParameters param) {
+    public ImageLoader(ProgramParameters param) {
         super(new QueueFiller<>(param.getImageQueueSize(), param.getImageRandom()) {
             @Override
             protected ImageWithInfo generateMedia(Path fileName) {
@@ -35,19 +34,24 @@ public class ImageLoaderAWT extends Loader<ImageWithInfo> {
                 LocalDateTime creationDate = null;
                 try {
                     img = new Image(fileName.toUri().toURL().toExternalForm(), true);
+
+                    if (param.getShowCreationDate()) {
+                        BasicFileAttributes attr = Files.readAttributes(fileName, BasicFileAttributes.class);
+                        creationDate = attr.creationTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    }
+
+                    if (param.getShowFileName()){
+                        filename = fileName.toString();
+                    }
+
                     Metadata metadata = ImageMetadataReader.readMetadata(fileName.toFile());
                     Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-                    BasicFileAttributes attr = Files.readAttributes(fileName, BasicFileAttributes.class);
-                    filename = fileName.toString();
-                    creationDate = attr.creationTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-
-         //           creationDate = time.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-
                     try {
                         orientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
                     } catch (Exception e){
                         LOG.info(e::toString);
                     }
+
                 } catch (ImageProcessingException | IOException e) {
                     LOG.severe(e::toString);
                 }

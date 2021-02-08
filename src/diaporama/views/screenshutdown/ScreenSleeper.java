@@ -10,6 +10,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
+/**
+ * Takes care of putting to sleep and waking the screen based on a given schedule
+ */
 public class ScreenSleeper {
     private static final Logger LOG = Logger.getLogger(ScreenSleeper.class.getName());
 
@@ -67,6 +70,9 @@ public class ScreenSleeper {
 
     }
 
+    /**
+     * Shuts down the ScreenSleeper
+     */
     public void stop(){
         if (stopped.compareAndSet(false, true)) {
             stpe.shutdownNow();
