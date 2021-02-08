@@ -7,6 +7,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -99,6 +100,8 @@ public class DiaporamaScreen extends Scene {
         } catch (InterruptedException | IllegalAccessException e) {
             LOG.severe( ()-> "got exception trying to first start animation " + e.toString());
         }
+
+        setCursor(Cursor.NONE);
 
     }
 
