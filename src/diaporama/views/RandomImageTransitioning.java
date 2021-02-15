@@ -106,6 +106,7 @@ public class RandomImageTransitioning extends Transitioning<ImageView, Loader<Im
      */
     private void adjustView(ImageView shower, int orientation) {
         switch (orientation){
+            case 0:
             case 1:
                 shower.setRotate(0);
                 break;
@@ -119,7 +120,7 @@ public class RandomImageTransitioning extends Transitioning<ImageView, Loader<Im
                 shower.setRotate(270);
                 break;
             default:
-                LOG.severe("Orientation " + orientation + " not treated.");
+                LOG.severe("Orientation " + orientation + " not treated. For image " + shower.getImage().getUrl());
         }
     }
 

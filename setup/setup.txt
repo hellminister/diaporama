@@ -237,7 +237,6 @@ Arial
 Cyan
 
 ##ScreenSleep
-;22:00
-
+;16:08
 ##ScreenWake
-;5:00
+;16:09

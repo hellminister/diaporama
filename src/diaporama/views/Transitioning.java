@@ -40,6 +40,7 @@ public abstract class Transitioning<T extends Node, R extends Loader<? extends M
                 currentPlaying.nextAnimation();
             } catch (Exception ex) {
                 LOG.severe(ex::toString);
+                ex.printStackTrace();
             }
         });
     }
