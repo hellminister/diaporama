@@ -38,6 +38,9 @@ public class ImageLoader extends Loader<ImageWithInfo> {
                     if (param.getShowCreationDate()) {
                         BasicFileAttributes attr = Files.readAttributes(fileName, BasicFileAttributes.class);
                         creationDate = attr.creationTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                        if (creationDate == null) {
+                            LOG.warning("Creation date is null for file " + fileName);
+                        }
                     }
 
                     if (param.getShowFileName()){

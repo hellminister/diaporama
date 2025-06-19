@@ -73,7 +73,12 @@ public class FileInfoBadge extends VBox {
      */
     public void setCreationDate(LocalDateTime time){
         if (creationDate != null){
-            creationDate.setText(time.format(datePattern));
+            if (time != null) {
+                creationDate.setText(time.format(datePattern));
+            }
+            else {
+                creationDate.setText("");
+            }
         }
     }
 

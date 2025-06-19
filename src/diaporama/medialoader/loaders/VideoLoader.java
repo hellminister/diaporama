@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.logging.Logger;
 
 /**
@@ -39,6 +38,9 @@ public class VideoLoader extends LockableLoader<MediaPlayerWithInfo> {
                             creationDate = attr.creationTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                         } catch (IOException e) {
                             e.printStackTrace();
+                        }
+                        if (creationDate == null) {
+                            LOG.warning("Creation date is null for file " + fileName);
                         }
                     }
                     return new MediaPlayerWithInfo(creationDate, filename, media);
